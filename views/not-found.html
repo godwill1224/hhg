@@ -21,21 +21,22 @@
 
   <!-- CSS Files -->
   <link href="../public/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="../public/css/main.css" rel="stylesheet">
+  <link href="../public/css/public-views.css" rel="stylesheet">
 
 </head>
 
 
 <body>
+  <main class="not-found">
 
-  <main class="main-default d-flex flex-column align-items-center justify-content-center">
-    <div class="container">
-      <div class="div not-found d-flex flex-column align-items-center justify-content-center">
-        <h1 class="text-center">Opps!</h1>
-        <h2 class="text-center">The page you are looking for was not found.</h2>
-        <a class="button" href="index.html">Back to home</a>
-      </div>
+    <a href="index.html">
+      <img src="../public/img/not-found.png" alt="not-found-image">
+    </a>
 
+    <div class="d-flex flex-column align-items-center justify-content-center">
+      <h1>Opps!</h1>
+      <h2>The page you are looking for was not found.</h2>
+      <a class="button" href="index.html">Back To Home</a>
     </div>
 
   </main><!-- End #main -->
