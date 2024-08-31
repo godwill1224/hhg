@@ -1,0 +1,28 @@
+extends admin-layout.pug
+
+block scripts
+    script(src='/js/branch.js')
+
+block content
+  .pagetitle
+    h1 Edit Branch
+    nav
+      ol.breadcrumb
+        li.breadcrumb-item
+            a(href='/dashboard') Dashboard
+        li.breadcrumb-item
+            a(href='all-branches') Branches List
+        li.breadcrumb-item.active Edit Branch
+  .card
+    form(action="/update-branch?id="+branchItem._id method="POST")
+      .mb-2
+        label(for='branchName') Branch Name:
+        input#branchName(name='branchName' type='text' placeholder='Enter Branch Name' value=branchItem.branchName)
+      .mb-2
+        label(for='branchLocation') Location:
+        input#branchLocation(name='branchLocation' type='text' placeholder='Enter Branch Location' value=branchItem.branchLocation)
+      .mb-4
+        label(for='dateCreated') Date and Time:
+        input#dateCreated(name='dateCreated' type='datetime-local' value=branchItem.dateCreated)
+      .text-center
+        button.button(type='submit') Save Changes

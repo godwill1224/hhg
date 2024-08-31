@@ -1,0 +1,40 @@
+extends admin-layout.pug
+
+block scripts
+    script(src='/js/branch.js')
+
+block content
+  .pagetitle
+    .d-flex.justify-content-between.align-items-center
+      div
+        h1 All Branches
+        nav
+          ol.breadcrumb
+            li.breadcrumb-item
+              a(href='/dashboard') Dashboard
+            li.breadcrumb-item.active Branches List
+      div
+        a.button(href='/add-branch')
+          i.bi.bi-plus-lg
+          |  New
+  .table-container
+    .controls
+      .searchInput
+        input#searchInput(type='text' placeholder='Search...')
+      div
+        select#entriesPerPage
+          option(value='5') 5 Entries
+          option(value='10') 10 Entries
+          option(value='15') 15 Entries
+          option(value='20') 20 Entries
+    table#dataTable
+      thead
+        tr
+          th Branch Name
+          th Location
+          th Date Added
+          th Actions
+      tbody
+
+    p#noResultsMessage(style='display:none;') No results found.
+    #pagination

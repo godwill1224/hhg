@@ -1,0 +1,72 @@
+doctype html
+head
+  meta(charset='utf-8')
+  meta(content='width=device-width, initial-scale=1.0' name='viewport')
+  title Home - Happy Hoe Groceries Ltd.
+  meta(content='' name='description')
+  meta(content='' name='keywords')
+
+  link(href='/img/favicon.png' rel='icon')
+  link(href='/img/apple-touch-icon.png' rel='apple-touch-icon')
+
+  link(href='https://fonts.gstatic.com' rel='preconnect')
+  link(href='https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i' rel='stylesheet')
+
+  link(href='/bootstrap/css/bootstrap.min.css' rel='stylesheet')
+  link(href='/css/public-views.css' rel='stylesheet')
+main.home
+  .container
+    .row.welcome.d-flex.align-items-center.justify-content-between.gy-4
+      .col-lg-9.mb-4.mb-lg-0
+        h2 Happy Hoe Grocery Ltd.
+        p
+          | The best wholesale produce distributor dealing in cereals like; beans, grain maize, cowpeas, g-nuts, rice and soybeans.
+      .col-lg-3.text-lg-end.mt-2.mt-lg-0
+        a.button(href='/login') Go To Dashboard
+    .row.content.gy-4
+      .col-lg-4.col-md-6.d-flex.align-items-stretch
+        .stat-box(data-aos='zoom-out' data-aos-delay='300')
+          span 400 tones
+          h4 Beans
+          p 20 tones | Sold this week
+
+      .col-lg-4.col-md-6.d-flex.align-items-stretch
+        .stat-box(data-aos='zoom-out' data-aos-delay='400')
+          span 560 tones
+          h4 Grain Maize
+          p 10 tones | Sold this week
+
+      .col-lg-4.col-md-6.d-flex.align-items-stretch
+        .stat-box(data-aos='zoom-out' data-aos-delay='500')
+          span 160 tones
+          h4 Cowpeas
+          p 5 tones | Sold this week
+
+      .col-lg-4.col-md-6.d-flex.align-items-stretch
+        .stat-box(data-aos='zoom-out' data-aos-delay='400')
+          span 200 tones
+          h4 G-nuts
+          p 28 tones | Sold this week
+
+      .col-lg-4.col-md-6.d-flex.align-items-stretch
+        .stat-box(data-aos='zoom-out' data-aos-delay='400')
+          span 700 tones
+          h4 Rice
+          p 100 tones | Sold this week
+
+      .col-lg-4.col-md-6.d-flex.align-items-stretch
+        .stat-box(data-aos='zoom-out' data-aos-delay='400')
+          span 350 tones
+          h4 Soybeans
+          p 8 tones | Sold this week
+
+footer.footer
+  | &copy; 2024 
+  strong
+    span Happy Hoe Groceries Limited
+  | . All Rights Reserved
+
+a.back-to-top.d-flex.align-items-center.justify-content-center(href='#')
+  i.bi.bi-arrow-up-short
+
+script(src='/js/main.js')

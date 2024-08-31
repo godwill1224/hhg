@@ -1,0 +1,52 @@
+doctype html
+head
+  meta(charset='utf-8')
+  meta(content='width=device-width, initial-scale=1.0' name='viewport')
+  title Login - Happy Hoe Groceries Ltd.
+  meta(content='' name='description')
+  meta(content='' name='keywords')
+
+  link(href='/img/favicon.png' rel='icon')
+  link(href='/img/apple-touch-icon.png' rel='apple-touch-icon')
+
+  link(href='https://fonts.gstatic.com' rel='preconnect')
+  link(href='https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i' rel='stylesheet')
+
+  link(href='/bootstrap/bootstrap-icons/bootstrap-icons.css' rel='stylesheet')
+  link(rel='stylesheet' href='/bootstrap/css/bootstrap.css')
+  link(rel='stylesheet' href='/css/public-views.css')
+
+header.login-header-link
+  a.d-flex.align-items-center(href='/')
+    i.bi.bi-arrow-left-short
+    span Home Page
+main.login
+  .form-card
+    .d-flex.justify-content-center.align-items-center.flex-column
+      a(href='/')
+        img(src='/img/logo.png' alt='logo')
+      p.text-center Login to your account to access more features.
+    form(action="/login" method="POST")
+      .mb-2
+        label(for='email') Email:
+        input#email(type='email' name='email' placeholder='Enter Your Email')
+      .mb-4
+        label(for='password') Password:
+        input#password(type='password' name='password' placeholder='Enter Your Password')
+      .text-center
+        button.button(type='submit') Login
+
+div#notification-container
+
+footer.footer.login-footer
+  | &copy; 2024 
+  strong
+    span Happy Hoe Groceries Limited
+  | . All Rights Reserved
+
+a.back-to-top.d-flex.align-items-center.justify-content-center(href='#')
+  i.bi.bi-arrow-up-short
+
+script(src='/js/main.js')
+script(src="/socket.io/socket.io.js")
+script(src='/js/notifications.js')

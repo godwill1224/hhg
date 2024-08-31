@@ -1,0 +1,28 @@
+extends admin-layout.pug
+
+block scripts
+    script(src='/js/branch.js')
+
+block content
+  .pagetitle
+    h1 Add New Branch
+    nav
+      ol.breadcrumb
+        li.breadcrumb-item
+          a(href='/dashboard') Dashboard
+        li.breadcrumb-item
+          a(href='all-branches') Branches List
+        li.breadcrumb-item.active New Branch
+  .card
+    form(action="/add-branch" method="POST")
+      .mb-2
+        label(for='branchName') Branch Name:
+        input#branchName(name='branchName' type='text' placeholder='Enter Branch Name')
+      .mb-2
+        label(for='branchLocation') Location:
+        input#branchLocation(name='branchLocation' type='text' placeholder='Enter Branch Location')
+      .mb-4
+        label(for='dateCreated') Date and Time:
+        input#dateCreated(name='dateCreated' type='datetime-local')
+      .text-center
+        button.button(type='submit') Add Branch
