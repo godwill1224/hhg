@@ -1,23 +1,35 @@
 const mongoose = require('mongoose');
 
 const stockSchema = new mongoose.Schema({
-    stockname: {
+    produceName: {
         type: String,
         trim: true,
     },
-    stocktype: {
-        type: String,  // Use 'String' with an uppercase 'S'
+    produceType: {
+        type: String,
         trim: true,
     },
     tonnage:{
         type: Number,
         trim:true,
     },
-    cost:{
+    produceCost:{
         type: Number,
         trim:true,
     },
-    dealer:{
+    sellingPrice:{
+        type: Number,
+        trim:true,
+    },
+    dealerName:{
+        type: String,
+        trim:true,
+    },
+    dealerEmail:{
+        type: String,
+        trim:true,
+    },
+    dealerPhone:{
         type: String,
         trim:true,
     },
@@ -25,12 +37,12 @@ const stockSchema = new mongoose.Schema({
         type: String,
         trim:true,
     },
-    contact:{
+    addedBy:{
         type: String,
         trim:true,
     },
-    sellingprice:{
-        type: Number,
+    dateAdded:{
+        type: Date,
         trim:true,
     },
 });

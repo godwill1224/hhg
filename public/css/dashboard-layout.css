@@ -70,10 +70,10 @@ h6 {
   opacity: 0;
   right: 25px;
   bottom: 15px;
-  z-index: 99999;
+  z-index: 999;
   background: #0ed145;
-  width: 40px;
-  height: 40px;
+  width: 35px;
+  height: 35px;
   border-radius: 4px;
   transition: all 0.4s;
 }
@@ -108,7 +108,8 @@ h6 {
   bottom: 10px;
   right: 30px;
   z-index: 1000;
-  max-width: 500px;
+  max-width: 350px;
+  transition: all 0.3s ease-in-out;
 }
 
 @media (max-width: 768px) {
@@ -121,11 +122,21 @@ h6 {
   background-color: #fff;
   padding: 10px;
   border-radius: 5px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   margin-bottom: 10px;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: slideIn 0.5s forwards;
+}
+
+@keyframes slideIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .notification h6 {
@@ -141,7 +152,24 @@ h6 {
 .notification img {
   width: 25px;
   height: 25px;
-  margin-right: 20px;
+  margin-left: 20px;
+}
+
+.notification-exit {
+  opacity: 1;
+  transform: translateY(0);
+  animation: slideOut 0.5s forwards;
+}
+
+@keyframes slideOut {
+  to {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+
+.error-notification {
+  color: #9d0d0d;
 }
 
 /* Header */
@@ -204,7 +232,7 @@ h6 {
 }
 
 .header-nav .nav-profile img {
-  max-height: 32px;
+  max-height: 30px;
 }
 
 .header-nav .nav-profile span {
@@ -222,11 +250,13 @@ h6 {
   font-size: 18px;
   margin-bottom: 0;
   font-weight: 600;
+  text-transform: capitalize;
   color: #444444;
 }
 
 .header-nav .profile .dropdown-header span {
   font-size: 14px;
+  text-transform: capitalize;
 }
 
 .header-nav .profile .dropdown-item {
@@ -529,6 +559,7 @@ h6 {
   width: 100%;
   margin: 0 auto;
   overflow-x: auto;
+  scrollbar-width: thin;
   background-color: #fff;
   padding: 20px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -543,6 +574,7 @@ table {
 }
 
 td {
+  font-size: 14px;
   padding: 10px;
   text-align: left;
   border-bottom: 1px solid #ddd;
@@ -554,6 +586,7 @@ td {
 }
 
 th {
+  font-size: 16px;
   border-radius: 5px;
   padding: 10px;
   text-align: left;
@@ -605,13 +638,19 @@ th {
 }
 
 /* table action buttons */
+.table-actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
 .action-btn {
   padding: 4px 12px;
   font-size: 12px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  margin-right: 5px;
+  margin-right: 10px;
 }
 
 .view-btn {
@@ -621,6 +660,7 @@ th {
 
 .view-btn:hover {
   background-color: #0eb93e;
+  color: white;
 }
 
 .edit-btn {
@@ -630,6 +670,7 @@ th {
 
 .edit-btn:hover {
   background-color: #ca9612;
+  color: white;
 }
 
 .del-btn {
@@ -639,6 +680,7 @@ th {
 
 .del-btn:hover {
   background-color: #c20f0f;
+  color: white;
 }
 
 /* inputs */
@@ -659,38 +701,146 @@ input:focus, textarea:focus, select:focus, input[type="file"]:focus {
   background: none;
 }
 
-/* Profile Page */
-.profile-img img {
-  max-width: 200px;
-  margin-right: 20px;
-  border-radius: 50%;
+label {
+  margin-bottom: 0;
+  font-size: 14px;
+  margin-top: 5px;
 }
 
-.profile-page h3 {
+.submit-button {
+  margin-top: 30px;
+  text-align: right;
+}
+
+.invalidation-message {
+  color: #ef1515;
+  font-size: 14px;
+  text-align: left;
+  border-radius: 5px;
+}
+
+/* Modal container */
+.modal {
+  display: none; 
+  position: fixed;
+  z-index: 1050;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.2);
+  overflow: auto;
+}
+
+.mdl-body{
+  padding: 10px;
+}
+
+.mdl-body h5 {
+  font-weight: 700;
+  font-size: 20px;
+}
+
+.mdl-body p {
+  font-size: 14px;
+}
+
+.mdl-footer{
+  text-align: right;
+  padding: 10px 0;
+}
+
+.modal-dialog {
+  margin: 20% auto;
+  max-width: 300px;
+}
+
+/* Profile Page */
+.profile-img img {
+  max-width: 180px;
+  margin-right: 20px;
+  border-radius: 5%;
+}
+
+.profile-card {
+ margin-bottom: 60px;
+}
+
+.profile-card h3 {
   font-size: 28px;
   font-weight: 700;
   color: #087001;
-  margin-top: 60px;
-  margin-bottom: 20px;
 }
 
-.profile-page .card h4 {
-  font-size: 34px;
-  font-weight: 700;
-}
-
-.profile-page .card h5 {
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.profile-page .card h6 {
-  font-size: 24px;
-  font-weight: 600;
-}
-
-.profile-page .card span {
-  font-size: 18px;
+.profile-card p {
+  font-size: 17px;
   font-weight: 500;
 }
 
+.profile-card span {
+  font-size: 16px;
+}
+
+.profile-card .bio:first-letter {
+  text-transform: capitalize
+}
+
+.profile-card .profile-header {
+  text-transform: capitalize;
+  border-bottom: 1px solid #ddd;
+}
+
+.profile-card .profile-info{
+  padding-bottom: 10px;
+  padding-top: 5px;
+  border-bottom: 1px solid #ddd;
+}
+
+.profile-card .actions {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+}
+
+/* Stock */
+.stock-card-header{
+  margin-bottom: 20px;
+}
+
+.stock-card-body{
+  margin-bottom: 10px;
+}
+
+.stock-card .stock-header {
+  text-align: center;
+  text-transform: capitalize;
+}
+
+.stock-card .stock-header .error {
+  color: #9d0d0d;
+}
+
+.stock-card .stock-header .success {
+  color: #0ed145;
+}
+
+.stock-card .stock-info{
+  padding-bottom: 10px;
+  padding-top: 5px;
+  border-bottom: 1px solid #ddd;
+}
+
+.stock-card h3 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #087001;
+}
+
+.stock-card p {
+  font-size: 17px;
+  font-weight: 500;
+}
+
+.stock-card span {
+  font-size: 16px;
+}

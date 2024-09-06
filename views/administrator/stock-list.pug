@@ -3,27 +3,22 @@ extends admin-layout.pug
 block scripts
   script.
     // Embed the users data from the server into a JavaScript variable
-    const allBranches = !{JSON.stringify(branches)};
-  script(src='/js/tables/branch.js')
+    const allStock = !{JSON.stringify(stock)};
+  script(src='/js/tables/stock.js')
 
 block content
   .pagetitle
-    .d-flex.justify-content-between.align-items-center
-      div
-        h1 All Branches
-        nav
-          ol.breadcrumb
-            li.breadcrumb-item
-              a(href='/dashboard') Dashboard
-            li.breadcrumb-item.active Branches List
-      div
-        a.button(href='/add-branch')
-          i.bi.bi-plus-lg
-          |  New
+    div
+      h1 All Stock
+      nav
+        ol.breadcrumb
+          li.breadcrumb-item
+            a(href='/dashboard') Dashboard
+          li.breadcrumb-item.active All Stock
   .table-container
     .controls
       .searchInput
-        input#searchInput(type='text' placeholder='search branches by name or location...')
+        input#searchInput(type='text' placeholder='search produce by name, type, storage branch or agent name...')
       div
         select#entriesPerPage
           option(value='5') 5 Entries
@@ -33,9 +28,13 @@ block content
     table#dataTable
       thead
         tr
-          th Branch Name
-          th Location
-          th Last Updated
+          th Name
+          th Type
+          th Tonnage
+          th Cost / tone (USh)
+          th Storage Branch
+          th Added by
+          th Last Update
           th Actions
       tbody
 

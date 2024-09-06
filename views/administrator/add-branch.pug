@@ -1,7 +1,7 @@
 extends admin-layout.pug
 
 block scripts
-    script(src='/js/branch.js')
+  script(src='/js/form-validations/add-branch.js')
 
 block content
   .pagetitle
@@ -21,8 +21,12 @@ block content
       .mb-2
         label(for='branchLocation') Location:
         input#branchLocation(name='branchLocation' type='text' placeholder='Enter Branch Location')
+      .mb-2
+        label(for='comment') Comment (Optional):
+        textarea#comment(name='comment' rows='5' placeholder='Add a Branch Comment')
       .mb-4
-        label(for='dateCreated') Date and Time:
+        label(for='dateCreated') Date Added:
         input#dateCreated(name='dateCreated' type='datetime-local')
-      .text-center
+      .submit-button
+        p.invalidation-message 
         button.button(type='submit') Add Branch

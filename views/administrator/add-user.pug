@@ -1,7 +1,7 @@
 extends admin-layout.pug
-
+  
 block scripts
-  script(src='/js/user-validation.js')
+  script(src='/js/form-validations/add-user.js')
   
 block content
   .pagetitle
@@ -15,45 +15,49 @@ block content
         li.breadcrumb-item.active New User
   .card
     form(action="/add-user" enctype="multipart/form-data" method="POST")
-      .mb-2
-        label(for='userName') Full Name:
-        input#userName(name='userName' type='text' placeholder='Enter User Name')
-      .mb-2
-        label(for='email') Email:
-        input#email(name='email' type='email' placeholder='Enter Email Address')
-      .mb-2
-        label(for='phoneNumber') Phone Number:
-        input#phoneNumber(name='phoneNumber' type='text' placeholder='Phone Number')
-      .mb-2
-        label(for='role') Role:
-        select#role(name='role')
-          option(selected='') Choose User Role...
-          option(value='administrator') Administrator
-          option(value='manager') Manager
-          option(value='salesAgent') SalesAgent
-      .mb-2
-        label(for='branch') Branch:
-        select#branch(name='branch')
-          option(selected='') Choose User Branch...
-          option(value='1') Branch 1
-          option(value='2') Branch 2
-          option(value='3') Branch 3
-      .mb-2
-        label(for='dateAdded') Date and Time:
-        input#dateAdded(name='dateAdded' type='datetime-local')
-      .mb-2
-        label(for='profileImage') Profile Image (Optional):
-        .image-preview.profile-img.mt-2.d-flex.align-items-center
-          img#profileImagePreview(src='/img/profile-img.png' alt='Profile Image' width='50px' height='50px')
-          input#profileImage.form-control.image-upload(type='file' name="profileImage" accept='image/*')
-      .mb-2
-        label(for='bio') Bio (Optional):
-        textarea#bio(name='bio' rows='3' placeholder='Enter User Biography')
-      .mb-2
-        label(for='password') Password
-        input#password(name='password' type='password' placeholder='Enter Password')
-      .mb-2
-        label(for='confirmPassword') Confirm Password:
-        input#confirmPassword(name='confirmPassword' type='password' placeholder='Re-enter Password')
-      .text-center.mt-4
-        button.button(type='submit') Add User
+      .row
+        .col-md-6
+          .mb-2
+            label(for='userName') Full Name:
+            input#userName(name='userName' type='text' placeholder='Enter User Name')
+          .mb-2
+            label(for='email') Email:
+            input#email(name='email' placeholder='Enter Email Address')
+          .mb-2
+            label(for='phoneNumber') Phone Number:
+            input#phoneNumber(name='phoneNumber' type='text' placeholder='Phone Number')
+          .mb-2
+            label(for='role') Role:
+            select#role(name='role')
+              option(selected value="") Asign Role
+              option(value='administrator') Administrator
+              option(value='manager') Manager
+              option(value='salesAgent') SalesAgent
+          .mb-2
+            label(for='branch') Branch:
+            select#branch(name='branch')
+              option(selected value="") Alocate Branch
+              option(value='1') Branch 1
+              option(value='2') Branch 2
+              option(value='3') Branch 3
+          .mb-2
+            label(for='dateAdded') Date Added:
+            input#dateAdded(name='dateAdded' type='datetime-local')
+        .col-md-6
+          .mb-2
+            label(for='profileImage') Profile Image (Optional):
+            .image-preview.profile-img.mt-2.d-flex.align-items-center
+              img#profileImagePreview(src='/img/profile-img.png' alt='Profile Image' width='45px' height='45px')
+              input#profileImage.form-control.image-upload(type='file' name="profileImage" accept='image/*')
+          .mb-2
+            label(for='bio') Bio (Optional):
+            textarea#bio(name='bio' rows='5' placeholder='Enter User Biography')
+          .mb-2
+            label(for='password') Password
+            input#password(name='password' type='password' placeholder='Enter Password')
+          .mb-2
+            label(for='confirmPassword') Confirm Password:
+            input#confirmPassword(name='confirmPassword' type='password' placeholder='Re-enter Password')
+          .submit-button
+            p.invalidation-message 
+            button.button(type='submit') Add User

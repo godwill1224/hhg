@@ -25,23 +25,23 @@ header#header.header.fixed-top.d-flex.align-items-center
     ul.d-flex.align-items-center
       li.nav-item.dropdown.pe-3
         a.nav-link.nav-profile.d-flex.align-items-center.pe-0(href='#' data-bs-toggle='dropdown')
-          img.rounded-circle(src='/img/profile-img.png' alt='Profile')
-          span.d-none.d-md-block.dropdown-toggle.ps-2 Mawa
+          img.rounded-circle(src=(loggedInUser.profileImage ? loggedInUser.profileImage : '/img/profile-img.png') alt="Profile Image")
+          span.d-none.d-md-block.dropdown-toggle.ps-2
 
         ul.dropdown-menu.dropdown-menu-end.dropdown-menu-arrow.profile
           li.dropdown-header
-            h6 Mawa Godwill
-            span Branch Manager
+            h6= loggedInUser.userName
+            span= `${loggedInUser.branch} branch`
           li
             hr.dropdown-divider
           li
-            a.dropdown-item.d-flex.align-items-center(href='profile.html')
+            a.dropdown-item.d-flex.align-items-center(href='/profile')
               i.bi.bi-person
               span My Profile
           li
             hr.dropdown-divider
           li
-            a.dropdown-item.d-flex.align-items-center(href='dashboard.html')
+            a.dropdown-item.d-flex.align-items-center(href='/logout')
               i.bi.bi-box-arrow-right
               span Log Out
 
@@ -51,26 +51,26 @@ header#header.header.fixed-top.d-flex.align-items-center
 aside#sidebar.sidebar
   ul#sidebar-nav.sidebar-nav
     li.nav-item(class=(activeSidebarLink === 'dashdoard' ? 'active' : ''))
-      a.nav-link(href='dashboard.html')
+      a.nav-link(href='/dashboard')
         i.bi.bi-grid
         span Dashboard
     li.nav-heading Sales
-    li.nav-item
-      a.nav-link(href='sales-list.html')
+    li.nav-item(class=(activeSidebarLink === 'sales' ? 'active' : ''))
+      a.nav-link(href='/all-sales')
         i.bi.bi-cash-coin
         span All Sales
-    li.nav-item
-      a.nav-link(href='credit-sales-list.html')
+    li.nav-item(class=(activeSidebarLink === 'credit-sales' ? 'active' : ''))
+      a.nav-link(href='/all-credit-sales')
         i.bi.bi-credit-card
         span All Credit Sales
     li.nav-heading Stock
-    li.nav-item
-      a.nav-link(href='stock-list.html')
+    li.nav-item(class=(activeSidebarLink === 'stock' ? 'active' : ''))
+      a.nav-link(href='/all-stock')
         i.bi.bi-boxes
         span All Stock
     li.nav-heading Branches
-    li.nav-item
-      a.nav-link(href='branch-list.html')
+    li.nav-item(class=(activeSidebarLink === 'branches' ? 'active' : ''))
+      a.nav-link(href='/all-branches')
         i.bi.bi-diagram-3
         span All Branches
     li.nav-heading Users
@@ -79,12 +79,12 @@ aside#sidebar.sidebar
         i.bi.bi-people
         span All Users
     li.nav-heading Account
-    li.nav-item
-      a.nav-link(href='dashboard.html')
+    li.nav-item(class=(activeSidebarLink === 'profile' ? 'active' : ''))
+      a.nav-link(href='/profile')
         i.bi.bi-person-circle
         span My Profile
     li.nav-item
-      a.nav-link(href='dashboard.html')
+      a.nav-link(href='/logout')
         i.bi.bi-box-arrow-right
         span Log Out
 
@@ -104,7 +104,6 @@ a.back-to-top.d-flex.align-items-center.justify-content-center(href='#')
 
 script(src='/bootstrap/js/bootstrap.bundle.min.js')
 script(src='/js/main.js')
-script(src="/socket.io/socket.io.js")
 script(src='/js/notifications.js')
 
 block scripts

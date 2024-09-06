@@ -1,0 +1,57 @@
+extends admin-layout.pug
+
+block scripts
+  //- script(src='/js/form-validations/add-stock.js')
+
+block content
+  .pagetitle
+    h1 Add New Produce
+    nav
+      ol.breadcrumb
+        li.breadcrumb-item
+          a(href='/dashboard') Dashboard
+        li.breadcrumb-item
+          a(href='all-stock') Stock List
+        li.breadcrumb-item.active New Produce
+  .card
+    form(action="/add-stock" method="POST")
+      .mb-2
+        label(for='produceName') Produce Name:
+        input#produceName(name='produceName' type='text' placeholder='Enter Produce Name')
+      .mb-2
+        label(for='produceType') Produce Type:
+        select#produceType(name='produceType')
+          option(selected value="") Select Produce Type
+          option(value='cereal') Cereal
+          option(value='grain') Grain
+          option(value='legume') Legume
+      .mb-2
+        label(for='tonnage') Tonnage (tones):
+        input#tonnage(name='tonnage' type='number' placeholder='Enter Produce Tonnage')
+      .mb-2
+        label(for='produceCost') Cost / tone (USh):
+        input#produceCost(name='produceCost' type='number' placeholder='Enter Produce Cost')
+      .mb-2
+        label(for='sellingPrice') Selling Price / tone (USh):
+        input#sellingPrice(name='sellingPrice' type='number' placeholder='Enter Selling Price')
+      .mb-2
+        label(for='storagebranch') Storage branch:
+        input#storagebranch(name='storagebranch' type='text')
+      .mb-2
+        label(for='addedBy') Added By:
+        input#addedBy(name='addedBy' type='text')
+      .mb-4
+        label(for='dateAdded') Date Added:
+        input#dateAdded(name='dateAdded' type='datetime-local')
+      .mb-2
+        label(for='dealerName') Dealer / Supplier Name:
+        input#dealerName(name='dealerName' type='text' placeholder='Enter Produce Location')
+      .mb-2
+        label(for='dealerEmail') Dealer / Supplier Email:
+        input#dealerEmail(name='dealerEmail' placeholder='Enter Dealer / Supplier Email Address')
+      .mb-2
+        label(for='dealerPhone') Dealer / Supplier Phone:
+        input#dealerPhone(name='dealerPhone' type='text' placeholder='Enter Dealer / Supplier Phone')
+      .submit-button
+        p.invalidation-message 
+        button.button(type='submit') Add Produce

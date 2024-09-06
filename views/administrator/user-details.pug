@@ -1,0 +1,74 @@
+extends admin-layout.pug
+
+block scripts
+  script(src='/js/modal.js')
+
+block content
+  .pagetitle
+    h1 User Details
+    nav
+      ol.breadcrumb
+        li.breadcrumb-item
+          a(href='/dashboard') Dashboard
+        li.breadcrumb-item
+          a(href='/all-users') Users List
+        li.breadcrumb-item.active User Details
+  .card.profile-card
+    .row
+      .col-lg-3.col-md-4.profile-img
+        img(src=(user.profileImage ? user.profileImage : '/img/profile-img.png') alt="Profile Image")
+      .col-lg-9.col-md-8
+        .pb-4.mb-2.mt-4.mt-lg-0.profile-header
+          h3
+            strong= user.userName
+          p= user.role 
+            br 
+            span= `${user.branch} branch`
+        .row.mb-2.profile-info
+          .col-lg-3
+            span
+              strong Bio:
+          .col-lg-9
+            span.bio= user.bio
+        .row.mb-2.profile-info
+          .col-lg-3
+            span
+              strong Email:
+          .col-lg-9
+            span= user.email
+        .row.mb-2.profile-info
+          .col-lg-3
+            span
+              strong Phone:
+          .col-lg-9
+            span= user.phoneNumber
+        .row.mb-2.profile-info
+          .col-lg-3
+            span
+              strong Last Updated:
+          .col-lg-9
+            span= moment(user.dateAdded).format('YYYY-MM-DD (h:mm A)')
+        .row.mt-4
+          .col-lg-3
+            span
+              strong Actions:
+          .col-lg-9.actions
+            a(class="action-btn edit-btn" href="/update-user/"+user._id)
+              i.bi.bi-pen
+              |  Edit
+            div
+              form(method="POST" action="/delete-user")
+                input(type="hidden" name="id" value=user._id)
+                button(class="action-btn del-btn" type="button")
+                  i.bi.bi-trash
+                  | Delete
+
+  .modal#deleteModal
+    .modal-dialog
+      .modal-content
+        .mdl-body
+          h5 Confirm Deletion!
+          p Are you sure you want to delete this user?
+        .mdl-footer
+          button(type='button' class='action-btn view-btn' id='cancelDelete') Cancel
+          button(type='button' class='action-btn del-btn' id='confirmDelete') Confirm Delete

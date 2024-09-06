@@ -5,7 +5,6 @@ const mongoose = require("mongoose");
 const passport = require("passport");
 const moment = require("moment");
 const http = require("http"); // Create the HTTP server
-const socketIo = require("socket.io"); // Include Socket.IO
 
 // sessions
 const expressSession = require("express-session")({
@@ -16,21 +15,21 @@ const expressSession = require("express-session")({
 
 require("dotenv").config();
 
+// instantiations
+const app = express();
+const server = http.createServer(app);
+const port = process.env.PORT || 4000; // Use environment port or default to 4000
+
 // import models
-const User = require("./models/userModel");
+const User = require("./models/user");
 
 // importing routes
+const notificationRoutes = require("./routes/notificationRoutes");
 const userRoutes = require("./routes/userRoutes");
 const branchRoutes = require("./routes/branchRoutes");
 const authRoutes = require("./routes/authRoutes");
 const pageRoutes = require("./routes/pageRoutes");
 const stockRoutes = require("./routes/stockRoutes");
-
-// instantiations
-const app = express();
-const server = http.createServer(app);
-const io = socketIo(server); // Initialize Socket.IO
-const port = process.env.PORT || 4000; // Use environment port or default to 4000
 
 // configurations
 mongoose.connect(process.env.DATABASE_LOCAL, {
@@ -69,13 +68,8 @@ passport.use(User.createStrategy());
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-// Attach Socket.IO to the request object
-// app.use((req, res, next) => {
-//   res.io = io;
-//   next();
-// });
-
 // use imported routes
+app.use("/", notificationRoutes);
 app.use("/", userRoutes);
 app.use("/", branchRoutes);
 app.use("/", authRoutes);

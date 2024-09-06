@@ -1,0 +1,65 @@
+extends admin-layout.pug
+
+block scripts
+  script(src='/js/form-validations/edit-profile.js')
+
+block content
+  .pagetitle
+    div
+      h1 All Stock
+      nav
+        ol.breadcrumb
+          li.breadcrumb-item
+            a(href='/dashboard') Dashboard
+          li.breadcrumb-item.active All Stock
+  .card.profile-card
+    .row
+      .col-lg-3.col-md-4.profile-img
+        img(src=(loggedInUser.profileImage ? loggedInUser.profileImage : '/img/profile-img.png') alt="Profile Image")
+      .col-lg-9.col-md-8
+        .pb-4.mb-2.mt-4.mt-lg-0.profile-header
+          h3
+            strong= loggedInUser.userName
+          p= loggedInUser.role 
+            br 
+            span= `${loggedInUser.branch} branch`
+        .row.mb-2.profile-info
+          .col-lg-3
+            span
+              strong Bio:
+          .col-lg-9
+            span.bio= loggedInUser.bio
+        .row.mb-2.profile-info
+          .col-lg-3
+            span
+              strong Email:
+          .col-lg-9
+            span= loggedInUser.email
+        .row.mb-2.profile-info
+          .col-lg-3
+            span
+              strong Phone:
+          .col-lg-9
+            span= loggedInUser.phoneNumber
+
+  .card
+    h3 
+      strong Edit Profile
+    form(action=`/profile?id=${loggedInUser._id}` enctype="multipart/form-data" method="POST")
+      .mb-2
+        label(for='userName') Full Name:
+        input#userName(name='userName' type='text' placeholder='Enter User Name' value=loggedInUser.userName)
+      .mb-2
+        label(for='phoneNumber') Phone Number:
+        input#phoneNumber(name='phoneNumber' type='text' placeholder='Phone Number' value=loggedInUser.phoneNumber)
+      .mb-2
+        label(for='profileImage') Profile Image:
+        .image-preview.profile-img.mt-2.d-flex.align-items-center
+            img#profileImagePreview(src=loggedInUser.profileImage alt='Profile Image' width='45px' height='45px')
+            input#profileImage.form-control.image-upload(type='file' name='profileImage' accept='image/*')
+      .mb-2
+        label(for='bio') Bio:
+        textarea#bio(name='bio' rows='5' placeholder='Enter User Biography')= loggedInUser.bio
+      .submit-button
+        p.invalidation-message 
+        button.button(type='submit') Save Changes

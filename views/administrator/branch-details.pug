@@ -1,0 +1,58 @@
+extends admin-layout.pug
+
+block scripts
+  script(src='/js/modal.js')
+
+block content
+  .pagetitle
+    h1 Branch Details
+    nav
+      ol.breadcrumb
+        li.breadcrumb-item
+          a(href='/dashboard') Dashboard
+        li.breadcrumb-item
+          a(href='/all-branches') Branches List
+        li.breadcrumb-item.active Branch Details
+  .card.profile-card
+        .pb-4.mb-2.profile-header
+          h3
+            strong= branch.branchName
+          p
+            i.bi.bi-geo-alt 
+            = branch.branchLocation
+        .row.mb-2.profile-info
+          .col-lg-3
+            span
+              strong Comment:
+          .col-lg-9
+            span.bio= branch.comment
+        .row.mb-2.profile-info
+          .col-lg-3
+            span
+              strong Last Updated:
+          .col-lg-9
+            span= moment(branch.dateCreated).format('YYYY-MM-DD (h:mm A)')
+        .row.mt-4
+          .col-lg-3
+            span
+              strong Actions:
+          .col-lg-9.actions
+            a(class="action-btn edit-btn" href="/update-branch/"+branch._id)
+              i.bi.bi-pen
+              |  Edit
+            div
+              form(method="POST" action="/delete-branch")
+                input(type="hidden" name="id" value=branch._id)
+                button(class="action-btn del-btn" type="button")
+                  i.bi.bi-trash
+                  | Delete
+
+  .modal#deleteModal
+    .modal-dialog
+      .modal-content
+        .mdl-body
+          h5 Confirm Deletion!
+          p Are you sure you want to delete this branch?
+        .mdl-footer
+          button(type='button' class='action-btn view-btn' id='cancelDelete') Cancel
+          button(type='button' class='action-btn del-btn' id='confirmDelete') Confirm Delete

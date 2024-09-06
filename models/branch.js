@@ -9,6 +9,10 @@ const branchSchema = new mongoose.Schema({
         type: String,
         trim: true,
     },
+    comment: {
+        type: String,
+        trim: true,
+    },
     dateCreated:{
         type: Date,
         trim:true,

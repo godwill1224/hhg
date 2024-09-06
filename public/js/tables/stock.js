@@ -1,19 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const data = [
-    { branchname: "maganjo", location: "kampala to bombo road" },
-    { branchname: "matugga", location: "kampala to bombo road" },
-    { branchname: "maganjo", location: "kampala to bombo road" },
-    { branchname: "maganjo", location: "kampala to bombo road" },
-    { branchname: "soybeans", location: "kampala to bombo road" },
-    { branchname: "matugga", location: "kampala to bombo road" },
-    { branchname: "maganjo", location: "kampala to bombo road" },
-    { branchname: "maganjo", location: "kampala to bombo road" },
-    { branchname: "maganjo", location: "kampala to bombo road" },
-    { branchname: "maganjo", location: "kampala to bombo road" },
-    { branchname: "maganjo", location: "kampala to bombo road" },
-    { branchname: "maganjo", location: "kampala to bombo road" },
-    // Add more data as needed
-  ];
+  const data = allStock;
 
   let rowsPerPage = parseInt(document.getElementById("entriesPerPage").value);
   let currentPage = 1;
@@ -31,15 +17,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (paginatedData.length > 0) {
       paginatedData.forEach((item) => {
+      
         const row = document.createElement("tr");
         row.innerHTML = `
-                    <td>${item.branchname}</td>
-                    <td>${item.location}</td>
-                    <td>${item.location}</td>
-                    <td><button class="action-btn view-btn"><i class="bi bi-eye"></i> View</button>
-                    <button class="action-btn edit-btn"><i class="bi bi-pen"></i> Edit</button>
-                    <button class="action-btn del-btn"><i class="bi bi-trash"></i> Delete</button></td>
-                `;
+          <td>${item.produceName}</td>
+          <td>${item.produceType}</td>
+          <td>${item.tonnage}</td>
+          <td>${item.produceCost}</td>
+          <td>${item.storagebranch}</td>
+          <td>${item.addedBy}</td>
+          <td>${item.formattedDate}</td>
+          <td>
+            <div class="table-actions">
+              <a class="action-btn view-btn" href="/view-stock/${item._id}"><i class="bi bi-eye"></i> View</a>
+            </div>
+          </td>
+        `;
+
         tableBody.appendChild(row);
       });
       noResultsMessage.style.display = "none";
@@ -70,8 +64,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const searchTerm = searchInput.value.toLowerCase();
     const filteredData = data.filter(
       (item) =>
-        item.name.toLowerCase().includes(searchTerm) ||
-        item.country.toLowerCase().includes(searchTerm)
+        item.produceName.toLowerCase().includes(searchTerm) ||
+        item.storagebranch.toLowerCase().includes(searchTerm) ||
+        item.produceType.toLowerCase().includes(searchTerm)||
+        item.addedBy.toLowerCase().includes(searchTerm)
     );
     renderTable(filteredData, 1);
   });

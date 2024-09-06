@@ -1,6 +1,57 @@
 extends admin-layout.pug
 
 block scripts
-    script(src='/js/user.js')
-
+  script(src='/js/form-validations/edit-user.js')
+  
 block content
+  .pagetitle
+    h1 Edit User Info
+    nav
+      ol.breadcrumb
+        li.breadcrumb-item
+          a(href='/dashboard') Dashboard
+        li.breadcrumb-item
+          a(href='/all-users') Users List
+        li.breadcrumb-item.active Edit User
+  .card
+    form(action=`/update-user?id=${user._id}` enctype="multipart/form-data" method="POST")
+      .row
+        .col-md-6
+          .mb-2
+            label(for='userName') Full Name:
+            input#userName(name='userName' type='text' placeholder='Enter User Name' value=user.userName)
+          .mb-2
+            label(for='email') Email (Read Only):
+            input#email(name='email' type='email' placeholder='Enter Email Address' value=user.email readonly)
+          .mb-2
+            label(for='phoneNumber') Phone Number:
+            input#phoneNumber(name='phoneNumber' type='text' placeholder='Phone Number' value=user.phoneNumber)
+          .mb-2
+            label(for='role') Role:
+            select#role(name='role')
+              option(value="") Assign Role
+              option(value='administrator' selected=user.role === 'administrator') Administrator
+              option(value='manager' selected=user.role === 'manager') Manager
+              option(value='salesAgent' selected=user.role === 'salesAgent') SalesAgent
+          .mb-2
+            label(for='branch') Branch:
+            select#branch(name='branch')
+              option(value="") Allocate Branch
+              option(value='1' selected=user.branch === '1') Branch 1
+              option(value='2' selected=user.branch === '2') Branch 2
+              option(value='3' selected=user.branch === '3') Branch 3
+        .col-md-6
+          .mb-2
+            label(for='dateAdded') Date Updated:
+            input#dateAdded(name='dateAdded' type='datetime-local' value=moment(user.dateAdded).format('YYYY-MM-DDTHH:mm'))
+          .mb-2
+            label(for='profileImage') Profile Image (Optional):
+            .image-preview.profile-img.mt-2.d-flex.align-items-center
+              img#profileImagePreview(src=user.profileImage alt='Profile Image' width='45px' height='45px')
+              input#profileImage.form-control.image-upload(type='file' name='profileImage' accept='image/*')
+          .mb-2
+            label(for='bio') Bio (Optional):
+            textarea#bio(name='bio' rows='5' placeholder='Enter User Biography')= user.bio
+          .submit-button
+            p.invalidation-message 
+            button.button(type='submit') Save Changes

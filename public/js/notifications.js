@@ -1,74 +1,76 @@
-// public/javascripts/notifications.js
+document.addEventListener("DOMContentLoaded", async () => {
+  const notificationQueue = [];
+  let isNotificationVisible = false;
 
-// Connect to the server via Socket.IO
-const socket = io();
+  // Function to display foreground notifications
+  function showForegroundNotification(title, message, notificationType) {
+    const notificationContainer = document.getElementById("notification-container");
 
-// socket.on("connect", () => {
-//   console.log("Connected to the server via Socket.IO");
-// });
+    if (!notificationContainer) {
+      console.error("Notification container not found");
+      return;
+    }
 
-// socket.on("disconnect", () => {
-//   console.log("Disconnected from the server");
-// });
+    const notificationElement = document.createElement("div");
+    notificationElement.className = "notification";
+    notificationElement.innerHTML = `
+      ${
+        notificationType === "success"
+          ? `<div>
+              <h6>${title}</h6>
+              <p>${message}</p>
+            </div>
+            <img src="/img/notification-success.png" alt="Notification Icon" />`
+          : `<div class="error-notification">
+              <h6>${title}</h6>
+              <p>${message}</p>
+            </div>
+            <img src="/img/notification-error.png" alt="Notification Icon" />`
+      }
+    `;
+    
+    // Append the notification to the container
+    notificationContainer.appendChild(notificationElement);
 
-// // Function to request notification permission
-// function requestNotificationPermission() {
-//   if ("Notification" in window && Notification.permission !== "granted") {
-//     Notification.requestPermission().then((permission) => {
-//       if (permission === "granted") {
-//         console.log("Notification permission granted.");
-//       } else {
-//         console.log("Notification permission denied.");
-//       }
-//     });
-//   }
-// }
+    isNotificationVisible = true;
 
-// Function to display foreground notifications
-function showForegroundNotification(title, options) {
-  const notificationContainer = document.getElementById(
-    "notification-container"
-  );
-
-  if (!notificationContainer) {
-    console.error("Notification container not found");
-    return;
+    // Automatically remove the notification after 5 seconds with an exit animation
+    setTimeout(() => {
+      notificationElement.classList.add("notification-exit");
+      setTimeout(() => {
+        notificationElement.remove();
+        isNotificationVisible = false;
+        // Show the next notification in the queue
+        if (notificationQueue.length > 0) {
+          const nextNotification = notificationQueue.shift();
+          showForegroundNotification(nextNotification.title, nextNotification.message, nextNotification.notificationType);
+        }
+      }, 500); // Matches the duration of the slide-out animation
+    }, 5000);
   }
 
-  const notificationElement = document.createElement("div");
-  notificationElement.className = "notification";
-  notificationElement.innerHTML = `
-    ${
-      options.icon
-        ? `<img src="${options.icon}" alt="Notification Icon" />`
-        : ""
+  // Function to add a notification to the queue
+  function queueNotification(title, message, notificationType) {
+    if (isNotificationVisible) {
+      notificationQueue.push({ title, message, notificationType });
+    } else {
+      showForegroundNotification(title, message, notificationType);
     }
-    <div>
-      <h6>${title}</h6>
-      <p>${options.body}</p>
-    </div>
-  `;
+  }
 
-  notificationContainer.appendChild(notificationElement);
+  try {
+    // Fetch notifications from the server
+    const response = await fetch("/notifications");
+    const notifications = await response.json();
 
-  // Remove the notification after 5 seconds
-  setTimeout(() => {
-    notificationElement.remove();
-  }, 5000);
-}
+    // Queue each notification to display them sequentially
+    notifications.forEach((notification) => {
+      queueNotification(notification.title, notification.message, notification.notificationType);
+    });
 
-
-// Listen for the 'notification' event from the server
-socket.on("notification", (notification) => {
-  const { title, body, icon } = notification;
-
-  console.log(notification);
-
-  // Display the notification
-  showForegroundNotification(title, {
-    body: body,
-    icon: icon,
-  });
+    // Clear notifications from the server after they are displayed
+    await fetch("/notifications", { method: "DELETE" });
+  } catch (error) {
+    console.error("Error fetching notifications:", error);
+  }
 });
-
-
