@@ -3,22 +3,22 @@ extends admin-layout.pug
 block scripts
   script.
     // Embed the users data from the server into a JavaScript variable
-    const allStock = !{JSON.stringify(stock)};
-  script(src='/js/tables/administrator/stock.js')
+    const allCreditSales = !{JSON.stringify(creditSales)};
+  script(src='/js/tables/administrator/credit-sale.js')
 
 block content
   .pagetitle
     div
-      h1 All Stock
+      h1 All Credit Sales
       nav
         ol.breadcrumb
           li.breadcrumb-item
             a(href='/dashboard') Dashboard
-          li.breadcrumb-item.active All Stock
+          li.breadcrumb-item.active All Credit Sales
   .table-container
     .controls
       .searchInput
-        input#searchInput(type='text' placeholder='search produce by name, type, storage branch or agent / manager name...')
+        input#searchInput(type='text' placeholder='search credit sale by produce name, dispatch branch or agent / manager name...')
       div
         select#entriesPerPage
           option(value='5') 5 Entries
@@ -28,13 +28,13 @@ block content
     table#dataTable
       thead
         tr
-          th Name
-          th Type
+          th Produce Name
           th Tonnage (Kg)
-          th Cost / Kg (USh)
-          th Storage Branch
-          th Added by
-          th Last Update
+          th Amt / Kg (USh)
+          th Tot Amt Due (USh)
+          th Dispatched On
+          th Due Date
+          th Dispatched By
           th Actions
       tbody
 

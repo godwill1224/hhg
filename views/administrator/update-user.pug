@@ -30,9 +30,9 @@ block content
             label(for='role') Role:
             select#role(name='role')
               option(value="") Assign Role
-              option(value='administrator' selected=user.role === 'administrator') Administrator
-              option(value='manager' selected=user.role === 'manager') Manager
-              option(value='salesAgent' selected=user.role === 'salesAgent') SalesAgent
+              option(value='administrator' selected=user.role === 'administrator') administrator
+              option(value='manager' selected=user.role === 'manager') manager
+              option(value='salesAgent' selected=user.role === 'salesAgent') salesAgent
           .mb-2
             label(for='branch') Branch:
             select#branch(name='branch')
@@ -42,8 +42,8 @@ block content
               option(value='3' selected=user.branch === '3') Branch 3
         .col-md-6
           .mb-2
-            label(for='dateAdded') Date Updated:
-            input#dateAdded(name='dateAdded' type='datetime-local' value=moment(user.dateAdded).format('YYYY-MM-DDTHH:mm'))
+            label(for='dateAdded') Date Updated (Read Only):
+            input#dateAdded(name='dateAdded' type='datetime-local' value=(new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0,16)))
           .mb-2
             label(for='profileImage') Profile Image (Optional):
             .image-preview.profile-img.mt-2.d-flex.align-items-center

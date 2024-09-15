@@ -1,5 +1,5 @@
 body {
-    background: linear-gradient(to right, #ffffff, #f4fff62a), url(../img/onboarding.jpg) fixed;
+    background: linear-gradient(to right, #f4fff6ba, #f4fff62a), url(../img/onboarding.jpg) fixed;
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
@@ -154,11 +154,11 @@ a:hover {
 }
 
 .login-header-link a {
-    color: #0ed145;
+    color: #087001;
 }
 
 .login-header-link a:hover {
-    color: #0eb93e;
+    color: #0ed145;
 }
 
 .login-header-link i {

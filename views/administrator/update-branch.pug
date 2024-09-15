@@ -25,8 +25,8 @@ block content
         label(for='comment') Comment (Optional):
         textarea#comment(name='comment' rows='5' placeholder='Add a Branch Comment')=branch.comment
       .mb-4
-        label(for='dateCreated') Date and Time:
-        input#dateCreated(name='dateCreated' type='datetime-local' value=moment(branch.dateCreated).format('YYYY-MM-DDTHH:mm'))
+        label(for='dateCreated') Date Updated (Read Only):
+        input#dateAdded(name='dateAdded' type='datetime-local' value=(new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0,16)))
       .submit-button
         p.invalidation-message 
         button.button(type='submit') Save Changes

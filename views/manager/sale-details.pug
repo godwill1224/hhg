@@ -1,0 +1,125 @@
+extends manager-layout.pug
+
+block scripts
+  script(src='/js/modal.js')
+
+block content
+  .pagetitle
+    h1 Sale Details
+    nav
+      ol.breadcrumb
+        li.breadcrumb-item
+          a(href='/dashboard') Dashboard
+        li.breadcrumb-item
+          a(href='/all-sales') Sales List
+        li.breadcrumb-item.active Sale Details
+  .card.stock-card
+    .mb-2
+      h4
+        strong Revenue Projections
+    .stock-card-header
+      .stock-header.success
+        h3
+          strong= new Intl.NumberFormat('en-UG', { style: 'currency', currency: 'UGX', minimumFractionDigits: 0 }).format(sale.tonnageSold * sale.amountPaid)
+        p Total Amount Paid
+      //- .stock-header.warning
+      //-   h3
+      //-     strong= new Intl.NumberFormat('en-UG', { style: 'currency', currency: 'UGX', minimumFractionDigits: 0 }).format(sale.tonnage * sale.sellingPrice)
+      //-   p Total Income
+      //- .stock-header.success
+      //-   h3
+      //-     strong= new Intl.NumberFormat('en-UG', { style: 'currency', currency: 'UGX', minimumFractionDigits: 0 }).format((sale.tonnage * sale.sellingPrice) - (produce.tonnage * produce.produceCost))
+      //-   p Total Profit
+    .stock-card-body
+      .mb-2
+        h4
+          strong Sale Info
+      .row.mb-2.stock-info
+        .col-lg-3
+          span
+            strong Produce Name:
+        .col-lg-9
+          span= sale.produceName
+      .row.mb-2.stock-info
+        .col-lg-3
+          span
+            strong Produce Type:
+        .col-lg-9
+          span= sale.produceType
+      .row.mb-2.stock-info
+        .col-lg-3
+          span
+            strong Tonnage Sold (Kg):
+        .col-lg-9
+          span= sale.tonnageSold
+      .row.mb-2.stock-info
+        .col-lg-3
+          span
+            strong Amount Paid / Kg (USh):
+        .col-lg-9
+          span= sale.amountPaid
+      .row.mb-2.stock-info
+        .col-lg-3
+          span
+            strong Sale Branch:
+        .col-lg-9
+          span= `${sale.saleBranch} branch`
+      .row.mb-2.stock-info
+        .col-lg-3
+          span
+            strong Sold by:
+        .col-lg-9
+          span= sale.soldBy
+      .row.mb-4.stock-info
+        .col-lg-3
+          span
+            strong Last Updated:
+        .col-lg-9
+          span= moment(sale.dateSold).format('YYYY-MM-DD (h:mm A)')
+    .stock-card-body
+      .mb-2.mt-4
+        h4
+          strong Buyer / Customer Details
+      .row.mb-2.stock-info
+        .col-lg-3
+          span
+            strong Name:
+        .col-lg-9
+          span= sale.buyerName
+      .row.mb-2.stock-info
+        .col-lg-3
+          span
+            strong Email:
+        .col-lg-9
+          span.email= sale.buyerEmail
+      .row.mb-4.stock-info
+        .col-lg-3
+          span
+            strong Phone:
+        .col-lg-9
+          span= sale.buyerPhone
+    .row.mb-2.mt-4
+      .col-lg-3
+        span
+          strong Actions:
+      .col-lg-9.actions
+        a(class="action-btn edit-btn" href="/update-stock/"+sale._id)
+          i.bi.bi-pen
+          |  Edit
+        div
+          form(method="POST" action="/delete-stock")
+            input(type="hidden" name="id" value=sale._id)
+            button(class="action-btn del-btn" type="button")
+              i.bi.bi-trash
+              | Delete
+
+  .modal#deleteModal
+    .modal-dialog
+      .modal-content
+        .mdl-body
+          h5 Confirm Deletion!
+          p Are you sure you want to delete this sale record?
+        .mdl-footer
+          button(type='button' class='action-btn view-btn' id='cancelDelete') Cancel
+          button(type='button' class='action-btn del-btn' id='confirmDelete') Confirm Delete
+

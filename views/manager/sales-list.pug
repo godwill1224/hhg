@@ -1,29 +1,29 @@
-extends admin-layout.pug
+extends manager-layout.pug
 
 block scripts
   script.
     // Embed the users data from the server into a JavaScript variable
-    const allBranches = !{JSON.stringify(branches)};
-  script(src='/js/tables/administrator/branch.js')
+    const allSales = !{JSON.stringify(sales)};
+  script(src='/js/tables/manager/sale.js')
 
 block content
   .pagetitle
     .d-flex.justify-content-between.align-items-center
       div
-        h1 All Branches
+        h1 All Branch Sales
         nav
           ol.breadcrumb
             li.breadcrumb-item
               a(href='/dashboard') Dashboard
-            li.breadcrumb-item.active Branches List
+            li.breadcrumb-item.active Sales List
       div
-        a.button(href='/add-branch')
+        a.button(href='/add-sale')
           i.bi.bi-plus-lg
           |  New
   .table-container
     .controls
       .searchInput
-        input#searchInput(type='text' placeholder='search branches by name or location...')
+        input#searchInput(type='text' placeholder='search sale by produce name, sale branch or agent / manager name...')
       div
         select#entriesPerPage
           option(value='5') 5 Entries
@@ -33,13 +33,17 @@ block content
     table#dataTable
       thead
         tr
-          th Branch Name
-          th Location
-          th Last Updated
+          th Produce Name
+          th Tonnage (Kg)
+          th Amt / Kg (USh)
+          th Tot Amt (USh)
+          th Sold On
+          th Sale Branch
+          th Sold By
           th Actions
       tbody
 
-    p#noResultsMessage(style='display:none;') No results found.
+    p#noResultsMessage(style='display:none;') No sales records found!
     #pagination
 
   .modal#deleteModal
@@ -47,7 +51,7 @@ block content
       .modal-content
         .mdl-body
           h5 Confirm Deletion!
-          p Are you sure you want to delete this branch?
+          p Are you sure you want to delete this sale record?
         .mdl-footer
           button(type='button' class='action-btn view-btn' id='cancelDelete') Cancel
           button(type='button' class='action-btn del-btn' id='confirmDelete') Confirm Delete

@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
       !emailInput.value.trim().match(emailPattern)
     ) {
       isValid = false;
-      errorMessage += "A valid Email Address is required.\n";
+      errorMessage += "A valid Email Address is invalid.\n";
       emailInput.style = "border: 1px #ef1515 solid";
     }
 
@@ -60,9 +60,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Validate Phone Number    
-    if (!phoneNumberInput.value.trim()) {
+    const phonePattern = /^\d{10}$/;
+    if (!phoneNumberInput.value.trim() || !phonePattern.test(phoneNumberInput.value.trim())) {
       isValid = false;
-      errorMessage += "Phone Number is required.\n";
+      errorMessage += "Phone Number is invalid.\n";
       phoneNumberInput.style = "border: 1px #ef1515 solid";
     }
 

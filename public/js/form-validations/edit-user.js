@@ -36,10 +36,11 @@ document.addEventListener("DOMContentLoaded", () => {
       emailInput.style = "border: 1px #ef1515 solid";
     }
 
-    // Validate Phone Number
-    if (!phoneNumberInput.value.trim()) {
+    // Validate Phone Number    
+    const phonePattern = /^\d{10}$/;
+    if (!phoneNumberInput.value.trim() || !phonePattern.test(phoneNumberInput.value.trim())) {
       isValid = false;
-      errorMessage += "Phone Number is required.\n";
+      errorMessage += "Phone Number is invalid.\n";
       phoneNumberInput.style = "border: 1px #ef1515 solid";
     }
 

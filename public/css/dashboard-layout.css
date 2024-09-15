@@ -184,6 +184,10 @@ h6 {
   margin-right: 15px;
 }
 
+.logo-container {
+  text-transform: capitalize;
+}
+
 .header {
   transition: all 0.5s;
   z-index: 997;
@@ -804,7 +808,17 @@ label {
 
 /* Stock */
 .stock-card-header{
-  margin-bottom: 20px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+@media (max-width: 768px) {
+  .stock-card-header{
+    flex-direction: column;
+  }
 }
 
 .stock-card-body{
@@ -814,33 +828,59 @@ label {
 .stock-card .stock-header {
   text-align: center;
   text-transform: capitalize;
-}
-
-.stock-card .stock-header .error {
-  color: #9d0d0d;
-}
-
-.stock-card .stock-header .success {
-  color: #0ed145;
+  padding: 10px;
+  border-radius: 5%;
+  width: 100%;
+  margin: 10px;
 }
 
 .stock-card .stock-info{
   padding-bottom: 10px;
   padding-top: 5px;
   border-bottom: 1px solid #ddd;
+  text-transform: capitalize;
+}
+
+.stock-card .stock-info .email{
+  text-transform: lowercase;
 }
 
 .stock-card h3 {
-  font-size: 28px;
+  font-size: 22px;
   font-weight: 700;
-  color: #087001;
+} 
+
+.stock-card h4 {
+  color: #0eb93e;
+  font-weight: 700;
 }
 
 .stock-card p {
-  font-size: 17px;
-  font-weight: 500;
+  font-size: 15px;
+  margin-bottom: 0;
+}
+
+.stock-card .error {
+  color: #9d0d0d;
+  border: 1px solid #9d0d0d;
+}
+
+.stock-card .warning {
+  color: #e5af0e;
+  border: 1px solid #e5af0e;
+}
+
+.stock-card .success {
+  color: #0eb93e;
+  border: 1px solid #0eb93e;
 }
 
 .stock-card span {
   font-size: 16px;
+}
+
+.stock-card .actions {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
 }

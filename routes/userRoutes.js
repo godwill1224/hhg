@@ -15,13 +15,24 @@ router.get(
     try {
       // Fetch the current logged-in user's details
       const loggedInUser = await User.findOne({ _id: req.session.user._id });
-
-      // Render the profile page with the user data
-      res.render("administrator/profile", {
-        loggedInUser: loggedInUser,
-        activeSidebarLink: "profile",
-      });
-
+      if (req.session.user.role === "administrator") {
+        res.render("administrator/profile", {
+          loggedInUser: loggedInUser,
+          activeSidebarLink: "profile",
+        });
+      } else if (req.session.user.role === "manager") {
+        res.render("manager/profile", {
+          loggedInUser: loggedInUser,
+          activeSidebarLink: "profile",
+        });
+      } else if (req.session.user.role === "sales-agent") {
+        res.render("sales-agent/profile", {
+          loggedInUser: loggedInUser,
+          activeSidebarLink: "profile",
+        });
+      } else {
+        res.status(403).send("User with that role does not exist in the database!");
+      }
       // Send a notification for profile access
       await axios.post("http://localhost:4500/notifications", {
         title: "Profile Accessed",
@@ -74,7 +85,8 @@ router.post(
       console.error("Error updating user:", err);
       res.status(500).send("Unable to update user in the database!");
     }
-  });
+  }
+);
 
 // all users
 router.get(
@@ -304,7 +316,7 @@ router.post("/delete-user", async (req, res) => {
         notificationType: "success",
       });
 
-      res.redirect("back");
+      res.redirect("/all-users");
     } else {
       res.redirect("/login");
     }

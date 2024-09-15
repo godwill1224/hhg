@@ -2,7 +2,7 @@ doctype html
 head
   meta(charset='utf-8')
   meta(content='width=device-width, initial-scale=1.0' name='viewport')
-  title Administrator - Happy Hoe Groceries Limited
+  title Manager - Happy Hoe Groceries Limited
   meta(content='' name='description')
   meta(content='' name='keywords')
 
@@ -20,6 +20,7 @@ header#header.header.fixed-top.d-flex.align-items-center
   .logo.d-flex.align-items-center.logo-container
     a(href='dashboard.html')
       img(src='/img/logo.png' alt='logo')
+    span.badge= `${loggedInUser.branch} branch`
 
   nav.header-nav.ms-auto
     ul.d-flex.align-items-center
@@ -70,16 +71,11 @@ aside#sidebar.sidebar
       a.nav-link(href='/all-stock')
         i.bi.bi-boxes
         span All Stock
-    li.nav-heading Branches
-    li.nav-item(class=(activeSidebarLink === 'branches' ? 'active' : ''))
-      a.nav-link(href='/all-branches')
-        i.bi.bi-diagram-3
-        span All Branches
-    li.nav-heading Users
+    li.nav-heading Agents
     li.nav-item(class=(activeSidebarLink === 'users' ? 'active' : ''))
       a.nav-link(href='/all-users')
         i.bi.bi-people
-        span All Users
+        span All Sales Agents
     li.nav-heading Account
     li.nav-item(class=(activeSidebarLink === 'profile' ? 'active' : ''))
       a.nav-link(href='/profile')

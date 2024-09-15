@@ -30,6 +30,8 @@ const branchRoutes = require("./routes/branchRoutes");
 const authRoutes = require("./routes/authRoutes");
 const pageRoutes = require("./routes/pageRoutes");
 const stockRoutes = require("./routes/stockRoutes");
+const salesRoutes = require("./routes/salesRoutes");
+const creditSalesRoutes = require("./routes/creditSalesRoutes");
 
 // configurations
 mongoose.connect(process.env.DATABASE_LOCAL, {
@@ -75,6 +77,8 @@ app.use("/", branchRoutes);
 app.use("/", authRoutes);
 app.use("/", pageRoutes);
 app.use("/", stockRoutes);
+app.use("/", salesRoutes);
+app.use("/", creditSalesRoutes);
 
 // handle 404 errors
 app.get("*", (req, res) => {

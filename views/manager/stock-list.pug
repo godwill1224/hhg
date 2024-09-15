@@ -1,20 +1,25 @@
-extends admin-layout.pug
+extends manager-layout.pug
 
 block scripts
   script.
     // Embed the users data from the server into a JavaScript variable
     const allStock = !{JSON.stringify(stock)};
-  script(src='/js/tables/administrator/stock.js')
+  script(src='/js/tables/manager/stock.js')
 
 block content
   .pagetitle
-    div
-      h1 All Stock
-      nav
-        ol.breadcrumb
-          li.breadcrumb-item
-            a(href='/dashboard') Dashboard
-          li.breadcrumb-item.active All Stock
+    .d-flex.justify-content-between.align-items-center
+      div
+        h1 All Stock
+        nav
+          ol.breadcrumb
+            li.breadcrumb-item
+              a(href='/dashboard') Dashboard
+            li.breadcrumb-item.active Stock List
+      div
+        a.button(href='/add-stock')
+          i.bi.bi-plus-lg
+          |  New
   .table-container
     .controls
       .searchInput
@@ -34,9 +39,19 @@ block content
           th Cost / Kg (USh)
           th Storage Branch
           th Added by
-          th Last Update
+          th Last Updated
           th Actions
       tbody
 
     p#noResultsMessage(style='display:none;') No results found.
     #pagination
+
+  .modal#deleteModal
+    .modal-dialog
+      .modal-content
+        .mdl-body
+          h5 Confirm Deletion!
+          p Are you sure you want to delete this produce?
+        .mdl-footer
+          button(type='button' class='action-btn view-btn' id='cancelDelete') Cancel
+          button(type='button' class='action-btn del-btn' id='confirmDelete') Confirm Delete

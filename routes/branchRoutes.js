@@ -218,7 +218,7 @@ router.post(
           notificationType: "success",
         });
 
-        res.redirect("back");
+        res.redirect("/all-branches");
       } else {
         res.status(403).send("Only Administrators are allowed to delete a branch!");
       }

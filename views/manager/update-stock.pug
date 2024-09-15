@@ -1,0 +1,67 @@
+extends manager-layout.pug
+
+block scripts
+  script(src='/js/form-validations/add-stock.js')
+
+block content
+  .pagetitle
+    h1 Update Produce
+    nav
+      ol.breadcrumb
+        li.breadcrumb-item
+          a(href='/dashboard') Dashboard
+        li.breadcrumb-item
+          a(href='/all-stock') Stock List
+        li.breadcrumb-item.active Update Produce
+  .card
+    form(action="/update-stock?id="+produce._id method="POST")
+      .row
+        .col-md-6
+          .mb-2
+            label(for='produceName') Produce Name:
+            select#produceName(name='produceName')
+              option(selected value="") Select Produce Name
+              option(value='beans' selected=produce.produceName === 'beans') beans
+              option(value='grain-maize' selected=produce.produceName === 'grain-maize') grain maize
+              option(value='cowpeas' selected=produce.produceName === 'cowpeas') cowpeas
+              option(value='g-nuts' selected=produce.produceName === 'g-nuts') g-nuts
+              option(value='rice' selected=produce.produceName === 'rice') rice
+              option(value='soybeans' selected=produce.produceName === 'soybeans') soybeans
+          .mb-2
+            label(for='produceType') Produce Type:
+            select#produceType(name='produceType')
+              option(selected value="") Select Produce Type
+              option(value='cereal' selected=produce.produceType === 'cereal') cereal
+              option(value='grain' selected=produce.produceType === 'grain') grain
+              option(value='legume' selected=produce.produceType === 'legume') legume
+          .mb-2
+            label(for='tonnage') Tonnage (Kg):
+            input#tonnage(name='tonnage' type='number' placeholder='Enter Produce Tonnage' value=produce.tonnage)
+          .mb-2
+            label(for='produceCost') Cost / Kg (USh):
+            input#produceCost(name='produceCost' type='number' placeholder='Enter Produce Cost' value=produce.produceCost)
+          .mb-2
+            label(for='sellingPrice') Selling Price / Kg (USh):
+            input#sellingPrice(name='sellingPrice' type='number' placeholder='Enter Selling Price' value=produce.sellingPrice)
+          .mb-4
+            label(for='dateAdded') Date Updated (Read Only):
+            input#dateAdded(name='dateAdded' type='datetime-local' value=(new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0,16)))
+        .col-md-6
+          .mb-2
+            label(for='storagebranch') Storage branch (Read Only):
+            input#storagebranch(name='storagebranch' type='text' readonly value=loggedInUser.branch)
+          .mb-2
+            label(for='addedBy') Added By (Read Only):
+            input#addedBy(name='addedBy' type='text' readonly value=loggedInUser.userName)
+          .mb-2
+            label(for='dealerName') Dealer / Supplier Name:
+            input#dealerName(name='dealerName' type='text' placeholder='Enter Produce Location' value=produce.dealerName)
+          .mb-2
+            label(for='dealerEmail') Dealer / Supplier Email:
+            input#dealerEmail(name='dealerEmail' placeholder='Enter Dealer / Supplier Email Address' value=produce.dealerEmail)
+          .mb-2
+            label(for='dealerPhone') Dealer / Supplier Phone:
+            input#dealerPhone(name='dealerPhone' type='text' placeholder='Enter Dealer / Supplier Phone' value=produce.dealerPhone)
+          .submit-button
+            p.invalidation-message 
+            button.button(type='submit') Save Changes
