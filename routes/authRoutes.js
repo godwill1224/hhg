@@ -33,11 +33,11 @@ router.post("/login", async (req, res, next) => {
 
         // Redirect based on the user's role
         if (req.user.role === "administrator") {
-          res.redirect("/all-users");
+          res.redirect("/dashboard");
         } else if (req.user.role === "manager") {
-          res.redirect("/all-stock");
+          res.redirect("/dashboard");
         } else if (req.user.role === "sales-agent") {
-          res.redirect("/all-stock");
+          res.redirect("/dashboard");
         }
         
       } catch (error) {

@@ -13,7 +13,7 @@ const fetchCreditSalesByRole = async (loggedInUser) => {
   if (loggedInUser.role === "manager") {
     creditSalesQuery = { dispatchBranch: loggedInUser.branch };
   } else if (loggedInUser.role === "sales-agent") {
-    creditSalesQuery = { dispatchedBy: loggedInUser._id };
+    creditSalesQuery = { dispatchedBy: loggedInUser.userName };
   }
 
   const sortedSales = await CreditSale.find(creditSalesQuery).sort({

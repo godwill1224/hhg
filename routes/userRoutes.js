@@ -124,13 +124,16 @@ router.post("/add-user", upload.single("profileImage"), async (req, res) => {
         );
         res.redirect("/all-users");
       });
+    } else {
       await sendNotification(
         "Permission Denied",
         "Only Administrators are allowed to add users.",
         "error"
       );
+      
       res.redirect("/all-users");
     }
+
   } catch (error) {
     await sendNotification(
       "Failed To Add User",

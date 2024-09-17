@@ -21,19 +21,19 @@ block content
             label(for='produceName') Produce Name:
             select#produceName(name='produceName')
               option(selected value="") Select Produce Name
-              option(value='beans') beans
-              option(value='grain-maize') grain maize
-              option(value='cowpeas') cowpeas
-              option(value='g-nuts') g-nuts
-              option(value='rice') rice
-              option(value='soybeans') soybeans
+              option(value='beans' selected=creditSale.produceName === 'beans') beans
+              option(value='grain-maize' selected=creditSale.produceName === 'grain-maize') grain maize
+              option(value='cowpeas' selected=creditSale.produceName === 'cowpeas') cowpeas
+              option(value='g-nuts' selected=creditSale.produceName === 'g-nuts') g-nuts
+              option(value='rice' selected=creditSale.produceName === 'rice') rice
+              option(value='soybeans' selected=creditSale.produceName === 'soybeans') soybeans
           .mb-2
             label(for='produceType') Produce Type:
             select#produceType(name='produceType')
               option(selected value="") Select Produce Type
-              option(value='cereal') cereal
-              option(value='grain') grain
-              option(value='legume') legume
+              option(value='cereal' selected=creditSale.produceType === 'cereal') cereal
+              option(value='grain' selected=creditSale.produceType === 'grain') grain
+              option(value='legume' selected=creditSale.produceType === 'legume') legume
           .mb-2
             label(for='tonnageDispatched') Tonnage Dispatched (Kg):
             input#tonnageDispatched(name='tonnageDispatched' type='number' placeholder='Enter Tonnage Dispatched' value=creditSale.tonnageDispatched)

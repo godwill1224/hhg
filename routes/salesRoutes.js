@@ -13,7 +13,7 @@ const fetchSalesByRole = async (loggedInUser) => {
   if (loggedInUser.role === "manager") {
     salesQuery = { saleBranch: loggedInUser.branch };
   } else if (loggedInUser.role === "sales-agent") {
-    salesQuery = { soldBy: loggedInUser._id };
+    salesQuery = { soldBy: loggedInUser.userName };
   }
 
   const sortedSales = await Sale.find(salesQuery).sort({ $natural: -1 });
