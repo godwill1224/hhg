@@ -8,26 +8,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
   form.addEventListener("submit", function (event) {
     let isValid = true;
-    let errorMessage = "Failed to update profile!!!\n";
+
+    // Clear previous styles
+    userNameInput.style = "border: 1px #087001 solid";
+    phoneNumberInput.style = "border: 1px #087001 solid";
+    profileImageInput.style = "border: 1px #087001 solid";
+
+    let errorMessage = "Failed to submit!\n";
 
     // Clear previous messages
     invalidationMessage.textContent = "";
 
-    // Validate Full Name
     if (!userNameInput.value.trim()) {
       isValid = false;
       errorMessage += "Full Name is required.\n";
       userNameInput.style = "border: 1px #ef1515 solid";
     }
 
-    // Validate Phone Number
     if (!phoneNumberInput.value.trim()) {
       isValid = false;
       errorMessage += "Phone Number is required.\n";
       phoneNumberInput.style = "border: 1px #ef1515 solid";
     }
 
-    // Validate Profile Image file size (if uploaded)
     if (profileImageInput.files.length > 0) {
       const file = profileImageInput.files[0];
       const maxSize = 2 * 1024 * 1024; // 2MB
@@ -38,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    // If validation fails, prevent form submission and show the error message
+  // If validation fails, prevent form submission and show the error message
     if (!isValid) {
       event.preventDefault();
       invalidationMessage.textContent = errorMessage;

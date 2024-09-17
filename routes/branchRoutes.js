@@ -5,56 +5,50 @@ const axios = require("axios");
 const Branch = require("../models/branch");
 const moment = require('moment'); 
 const User = require("../models/user");
+const { sendNotification } = require("../utils/notificationService");
 
 // Admin: Get all branches
 router.get(
-"/all-branches",
-connectEnsureLogin.ensureLoggedIn(),
-async (req, res) => {
-  try {
-    const loggedInUser = await User.findOne({ _id: req.session.user._id });
+  "/all-branches",
+  connectEnsureLogin.ensureLoggedIn(),
+  async (req, res) => {
+    try {
+      const loggedInUser = await User.findById(req.session.user._id);
 
-    // Ensure the user session and role are valid
-    if (req.session.user && req.session.user.role === "administrator") {
-      const allBranches = await Branch.find().sort({ $natural: -1 });
+      if (loggedInUser && req.session.user.role === "administrator") {
+        const branches = await Branch.find().sort({ $natural: -1 });
 
-      // Destructure and format only the dateCreated field using Moment.js
-      const formattedBranches = allBranches.map(branch => {
-        const { dateCreated } = branch;
-        return {
-          ...branch._doc, // Spread the rest of the branch data
-          formattedDate: moment(dateCreated).format('YYYY-MM-DD (h:mm A)'), // Format the date
-        };
-      });
+        const formattedBranches = branches.map(branch => ({
+          ...branch._doc,
+          formattedDate: moment(branch.dateCreated).format('YYYY-MM-DD (h:mm A)'),
+        }));
 
-      try {
-        // Send a notification for accessing the branch list
-        await axios.post("http://localhost:4500/notifications", {
-          title: "Branch List Accessed",
-          message: "You have accessed the list of all branches.",
-          notificationType: "success",
+        await sendNotification(
+          "Branch List Accessed",
+          "You have accessed the list of all branches.",
+          "success"
+        );
+
+        res.render("administrator/branch-list", {
+          branches: formattedBranches,
+          activeSidebarLink: "branches",
+          loggedInUser,
         });
-      } catch (notificationError) {
-        console.error("Error sending notification:", notificationError);
+      } else {
+        res.status(403).send("Unauthorized access! Only Administrators can access this page.");
       }
-
-      // Render the branch list page for the administrator, with formatted dates
-      res.render("administrator/branch-list", {
-        branches: formattedBranches,  // Send the formatted data to the view
-        activeSidebarLink: "branches",
-        loggedInUser: loggedInUser,
-      });
-    } else {
-      // Handle unauthorized access
-      res.status(403).send("Only Administrators are allowed to access this page!");
+    } catch (error) {
+      console.error("Error fetching branches:", error);
+      
+      // Send error notification
+      await sendNotification(
+        "Error Fetching Branches",
+        "An error occurred while retrieving the branches.",
+        "error"
+      );
     }
-  } catch (error) {
-    console.error("Error fetching branches:", error);
-    res.status(400).send("Unable to find branches in your database!");
   }
-}
 );
-
 
 // Admin: Add new branch (GET)
 router.get(
@@ -62,19 +56,25 @@ router.get(
   connectEnsureLogin.ensureLoggedIn(),
   async (req, res) => {
     try {
-      const loggedInUser = await User.findOne({ _id: req.session.user._id });
+      const loggedInUser = await User.findById(req.session.user._id);
 
-      if (req.session.user.role === "administrator") {
+      if (loggedInUser.role === "administrator") {
         res.render("administrator/add-branch", {
           activeSidebarLink: "branches",
-          loggedInUser: loggedInUser,
+          loggedInUser,
         });
       } else {
-        res.status(403).send("Only Administrators are allowed to access this page!");
+        res.status(403).send("Unauthorized access! Only Administrators can access this page.");
       }
     } catch (error) {
       console.error("Error fetching user", error);
-      res.status(400).send("Unable to find user in your database!");
+
+      // Send error notification
+      await sendNotification(
+        "Error Accessing Add Branch Page",
+        "An error occurred while trying to access the add branch page.",
+        "error"
+      );
     }
   }
 );
@@ -89,22 +89,28 @@ router.post(
         const newBranch = new Branch(req.body);
         await newBranch.save();
 
-        // Send a notification for branch addition
-        await axios.post("http://localhost:4500/notifications", {
-          title: "Branch Added",
-          message: "A new branch has been successfully added.",
-          notificationType: "success",
-        });
+        // Success notification
+        await sendNotification(
+          "Branch Added",
+          "A new branch has been successfully added.",
+          "success"
+        );
 
         res.redirect("/all-branches");
       } else {
-        res.status(403).send("Only Administrators are allowed to add a branch!");
+        res.status(403).send("Unauthorized access! Only Administrators can add a branch.");
       }
-    } catch (err) {
-      console.error("Add branch error:", err);
-      res.status(400).render("administrator/add-branch", {
-        error: "Failed to add branch. Please try again.",
-      });
+    } catch (error) {
+      console.error("Add branch error:", error);
+
+      // Send error notification
+      await sendNotification(
+        "Error Adding Branch",
+        "An error occurred while trying to add a new branch.",
+        "error"
+      );
+
+      res.status(500).render("administrator/add-branch");
     }
   }
 );
@@ -115,62 +121,35 @@ router.get(
   connectEnsureLogin.ensureLoggedIn(),
   async (req, res) => {
     try {
-      const loggedInUser = await User.findOne({ _id: req.session.user._id });
+      const loggedInUser = await User.findById(req.session.user._id);
 
-      if (req.session.user.role === "administrator") {
-        const dbBranch = await Branch.findOne({ _id: req.params.id });
+      if (loggedInUser.role === "administrator") {
+        const dbBranch = await Branch.findById(req.params.id);
 
-        // Send a notification for viewing branch details
-        await axios.post("http://localhost:4500/notifications", {
-          title: "Branch Details Accessed",
-          message: `Branch details for ${dbBranch.branchName} have been accessed for veiwing.`,
-          notificationType: "success",
-        });
+        // Success notification
+        await sendNotification(
+          "Branch Details Accessed",
+          `Branch details for ${dbBranch.branchName} have been accessed for viewing.`,
+          "success"
+        );
 
         res.render("administrator/branch-details", {
           branch: dbBranch,
           activeSidebarLink: "branches",
-          loggedInUser: loggedInUser,
+          loggedInUser,
         });
       } else {
-        res.status(403).send("Only Administrators are allowed to access this page!");
+        res.status(403).send("Unauthorized access! Only Administrators can access this page.");
       }
-    } catch (err) {
-      console.error("Error fetching branch details:", err);
-      res.status(400).send("Unable to find branch in the database!");
-    }
-  }
-);
+    } catch (error) {
+      console.error("Error fetching branch details:", error);
 
-// Admin: Update branch (GET)
-router.get(
-  "/update-branch/:id",
-  connectEnsureLogin.ensureLoggedIn(),
-  async (req, res) => {
-    try {
-      const loggedInUser = await User.findOne({ _id: req.session.user._id });
-
-      if (req.session.user.role === "administrator") {
-        const dbBranch = await Branch.findOne({ _id: req.params.id });
-
-        // Send a notification for viewing branch details
-        await axios.post("http://localhost:4500/notifications", {
-          title: "Branch Details Accessed",
-          message: `Branch details for ${dbBranch.branchName} have been accessed for editing.`,
-          notificationType: "success",
-        });
-
-        res.render("administrator/update-branch", {
-          branch: dbBranch,
-          activeSidebarLink: "branches",
-          loggedInUser: loggedInUser,
-        });
-      } else {
-        res.status(403).send("Only Administrators are allowed to access this page!");
-      }
-    } catch (err) {
-      console.error("Error fetching branch details:", err);
-      res.status(400).send("Unable to find branch in the database!");
+      // Send error notification
+      await sendNotification(
+        "Error Fetching Branch Details",
+        "An error occurred while trying to retrieve the branch details.",
+        "error"
+      );
     }
   }
 );
@@ -182,22 +161,28 @@ router.post(
   async (req, res) => {
     try {
       if (req.session.user.role === "administrator") {
-        await Branch.findOneAndUpdate({ _id: req.query.id }, req.body);
+        await Branch.findByIdAndUpdate(req.query.id, req.body);
 
-        // Send a notification for branch update
-        await axios.post("http://localhost:4500/notifications", {
-          title: "Branch Updated",
-          message: "Branch details have been updated successfully.",
-          notificationType: "success",
-        });
+        // Success notification
+        await sendNotification(
+          "Branch Updated",
+          "Branch details have been updated successfully.",
+          "success"
+        );
 
         res.redirect("/all-branches");
       } else {
-        res.status(403).send("Only Administrators are allowed to update a branch!");
+        res.status(403).send("Unauthorized access! Only Administrators can update a branch.");
       }
-    } catch (err) {
-      console.error("Error updating branch:", err);
-      res.status(400).send("Unable to update branch in the database!");
+    } catch (error) {
+      console.error("Error updating branch:", error);
+
+      // Send error notification
+      await sendNotification(
+        "Error Updating Branch",
+        "An error occurred while trying to update the branch details.",
+        "error"
+      );
     }
   }
 );
@@ -209,22 +194,28 @@ router.post(
   async (req, res) => {
     try {
       if (req.session.user.role === "administrator") {
-        await Branch.deleteOne({ _id: req.body.id });
+        await Branch.findByIdAndDelete(req.body.id);
 
-        // Send a notification for branch deletion
-        await axios.post("http://localhost:4500/notifications", {
-          title: "Branch Deleted",
-          message: "A branch has been deleted successfully.",
-          notificationType: "success",
-        });
+        // Success notification
+        await sendNotification(
+          "Branch Deleted",
+          "A branch has been deleted successfully.",
+          "success"
+        );
 
         res.redirect("/all-branches");
       } else {
-        res.status(403).send("Only Administrators are allowed to delete a branch!");
+        res.status(403).send("Unauthorized access! Only Administrators can delete a branch.");
       }
-    } catch (err) {
-      console.error("Error deleting branch:", err);
-      res.status(400).send("Unable to delete branch in the database!");
+    } catch (error) {
+      console.error("Error deleting branch:", error);
+
+      // Send error notification
+      await sendNotification(
+        "Error Deleting Branch",
+        "An error occurred while trying to delete the branch.",
+        "error"
+      );
     }
   }
 );

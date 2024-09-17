@@ -1,0 +1,73 @@
+extends manager-layout.pug
+
+block scripts
+  script(src='/js/form-validations/credit-sale.js')
+
+block content
+  .pagetitle
+    h1 Edit Credit Sale
+    nav
+      ol.breadcrumb
+        li.breadcrumb-item
+          a(href='/dashboard') Dashboard
+        li.breadcrumb-item
+          a(href='/all-credit-sales') Credit Sales List
+        li.breadcrumb-item.active Edit Credit Sale
+  .card
+    form(action="/update-credit-sale?id="+creditSale._id method="POST")
+      .row
+        .col-md-6
+          .mb-2
+            label(for='produceName') Produce Name:
+            select#produceName(name='produceName')
+              option(selected value="") Select Produce Name
+              option(value='beans') beans
+              option(value='grain-maize') grain maize
+              option(value='cowpeas') cowpeas
+              option(value='g-nuts') g-nuts
+              option(value='rice') rice
+              option(value='soybeans') soybeans
+          .mb-2
+            label(for='produceType') Produce Type:
+            select#produceType(name='produceType')
+              option(selected value="") Select Produce Type
+              option(value='cereal') cereal
+              option(value='grain') grain
+              option(value='legume') legume
+          .mb-2
+            label(for='tonnageDispatched') Tonnage Dispatched (Kg):
+            input#tonnageDispatched(name='tonnageDispatched' type='number' placeholder='Enter Tonnage Dispatched' value=creditSale.tonnageDispatched)
+          .mb-2
+            label(for='amountDue') Amount Due / Kg (USh):
+            input#amountDue(name='amountDue' type='number' placeholder='Amount Due per Kg' value=creditSale.amountDue)
+          .mb-2
+            label(for='dispatchDate') Date Dispatched:
+            input#dispatchDate(name='dispatchDate' type='datetime-local' value= new Date(creditSale.dispatchDate).toISOString().slice(0, 16))
+          .mb-2
+            label(for='dueDate') Due Date:
+            input#dueDate(name='dueDate' type='datetime-local' value= new Date(creditSale.dueDate).toISOString().slice(0, 16))
+          .mb-2
+            label(for='dispatchBranch') Dispatch Branch (Read Only):
+            input#dispatchBranch(name='dispatchBranch' type='text' readonly value=loggedInUser.branch)
+        .col-md-6
+          .mb-2
+            label(for='dispatchedBy') Dispatched By (Read Only):
+            input#dispatchedBy(name='dispatchedBy' type='text' readonly value=loggedInUser.userName)
+          .mb-2
+            label(for='buyerName') Buyer / Customer Name:
+            input#buyerName(name='buyerName' type='text' placeholder='Enter Buyer / Customer Name' value=creditSale.buyerName)
+          .mb-2
+            label(for='buyerEmail') Buyer / Customer Email:
+            input#buyerEmail(name='buyerEmail' placeholder='Enter Buyer / Customer Email Address' value=creditSale.buyerEmail)
+          .mb-2
+            label(for='buyerPhone') Buyer / Customer Phone:
+            input#buyerPhone(name='buyerPhone' type='text' placeholder='Enter Buyer / Customer Phone' value=creditSale.buyerPhone)
+          .mb-2
+            label(for='buyerNIN') Buyer / Customer NIN:
+            input#buyerNIN(name='buyerNIN' type='text' placeholder='Enter Buyer / Customer NIN' value=creditSale.buyerNIN)
+          .mb-2
+            label(for='buyerLocation') Buyer / Customer Location:
+            input#buyerLocation(name='buyerLocation' type='text' placeholder='Enter Buyer / Customer Location' value=creditSale.buyerLocation)
+          .submit-button
+            p.invalidation-message 
+            button.button(type='submit') Save Changes

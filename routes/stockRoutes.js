@@ -1,85 +1,92 @@
 const express = require("express");
 const router = express.Router();
 const connectEnsureLogin = require("connect-ensure-login");
-const axios = require("axios");
 const moment = require("moment");
 const User = require("../models/user");
 const Stock = require("../models/stock");
+const { sendNotification } = require("../utils/notificationService");
 
-// Admin: Get all stock
+// Common logic to fetch user and sales based on role
+const fetchStockByRole = async (loggedInUser) => {
+  let stockQuery = {};
+
+  if (loggedInUser.role === "manager" || loggedInUser.role === "sales-agent") {
+    stockQuery = { storagebranch: loggedInUser.branch };
+  }
+
+  const sortedStock = await Stock.find(stockQuery).sort({ $natural: -1 });
+  return sortedStock.map((produce) => ({
+    ...produce._doc,
+    formattedDate: moment(produce.dateAdded).format("YYYY-MM-DD (h:mm A)"),
+  }));
+};
+
+// Get all stock
 router.get(
   "/all-stock",
   connectEnsureLogin.ensureLoggedIn(),
   async (req, res) => {
     try {
-      const loggedInUser = await User.findOne({ _id: req.session.user._id });
+      const loggedInUser = await User.findById(req.session.user._id);
+      const formattedStock = await fetchStockByRole(loggedInUser);
 
-      // Ensure the user session and role are valid
+      await sendNotification(
+        "Stock List Accessed",
+        "You have accessed the list of all stock.",
+        "success"
+      );
 
-      const allStock = await Stock.find().sort({ $natural: -1 });
-
-      // Destructure and format only the dateAdded field using Moment.js
-      const formattedStock = allStock.map((produce) => {
-        const { dateAdded } = produce;
-        return {
-          ...produce._doc, // Spread the rest of the stock data
-          formattedDate: moment(dateAdded).format("YYYY-MM-DD (h:mm A)"), // Format the date
-        };
+      res.render(`${loggedInUser.role}/stock-list`, {
+        stock: formattedStock,
+        activeSidebarLink: "stock",
+        loggedInUser,
       });
-
-      await axios.post("http://localhost:4500/notifications", {
-        title: "Stock List Accessed",
-        message: "You have accessed the list of all stock.",
-        notificationType: "success",
-      });
-      if (req.session.user && req.session.user.role === "administrator") {
-        res.render("administrator/stock-list", {
-          stock: formattedStock,
-          activeSidebarLink: "stock",
-          loggedInUser: loggedInUser,
-        });
-      } else if (req.session.user && req.session.user.role === "manager") {
-        res.render("manager/stock-list", {
-          stock: formattedStock,
-          activeSidebarLink: "stock",
-          loggedInUser: loggedInUser,
-        });
-      } else {
-        res
-          .status(403)
-          .send("Only Administrators are allowed to access this page!");
-      }
     } catch (error) {
-      console.error("Error fetching Stock:", error);
-      res.status(400).send("Unable to find stock in your database!");
+      await sendNotification(
+        "Failed To Fetch Stock",
+        "Unable to find stock in the database.",
+        "error"
+      );
+      res.status(400).redirect("/dashboard");
+      console.error("Error fetching stock:", error);
     }
   }
 );
 
-// Admin: Add new stock (GET)
+// Add new stock (GET)
 router.get(
   "/add-stock",
   connectEnsureLogin.ensureLoggedIn(),
   async (req, res) => {
     try {
-      const loggedInUser = await User.findOne({ _id: req.session.user._id });
+      const loggedInUser = await User.findById(req.session.user._id);
 
-      if (req.session.user.role === "manager") {
+      if (loggedInUser.role === "manager") {
         res.render("manager/add-stock", {
           activeSidebarLink: "stock",
-          loggedInUser: loggedInUser,
+          loggedInUser,
         });
       } else {
-        res.status(403).send("Only Managers are allowed to access this page!");
+        await sendNotification(
+          "Permission Denied",
+          "Only Managers are allowed to add stock.",
+          "error"
+        );
+        res.redirect("/all-stock");
       }
     } catch (error) {
-      console.error("Error fetching user", error);
-      res.status(400).send("Unable to find user in your database!");
+      await sendNotification(
+        "Failed To Add Stock",
+        "Unable to load the add stock page. Please try again.",
+        "error"
+      );
+      res.status(400).redirect("/dashboard");
+      console.error("Error loading add stock page:", error);
     }
   }
 );
 
-// Admin: Add new stock (POST)
+// Add new stock (POST)
 router.post(
   "/add-stock",
   connectEnsureLogin.ensureLoggedIn(),
@@ -89,152 +96,171 @@ router.post(
         const newProduce = new Stock(req.body);
         await newProduce.save();
 
-        // Send a notification for stock addition
-        await axios.post("http://localhost:4500/notifications", {
-          title: "Produce Added",
-          message: "A new Produce has been successfully added.",
-          notificationType: "success",
-        });
-
+        await sendNotification(
+          "Stock Added",
+          "A new produce has been successfully added.",
+          "success"
+        );
         res.redirect("/all-stock");
       } else {
-        res.status(403).send("Only Managers are allowed to add a produce!");
+        await sendNotification(
+          "Permission Denied",
+          "Only Managers are allowed to add stock.",
+          "error"
+        );
+        res.redirect("/all-stock");
       }
-    } catch (err) {
-      console.error("Add Produce error:", err);
-      res.status(400).render("manager/add-stock", {
-        error: "Failed to add produce. Please try again.",
-      });
+    } catch (error) {
+      await sendNotification(
+        "Failed To Add Stock",
+        "Unable to add the stock. Please try again.",
+        "error"
+      );
+      res.status(400).redirect("/dashboard");
+      console.error("Error adding stock:", error);
     }
   }
 );
 
-// Admin: View stock (GET)
+// View stock details
 router.get(
   "/view-stock/:id",
   connectEnsureLogin.ensureLoggedIn(),
   async (req, res) => {
     try {
-      const loggedInUser = await User.findOne({ _id: req.session.user._id });
+      const loggedInUser = await User.findById(req.session.user._id);
+      const dbProduce = await Stock.findById(req.params.id);
 
-      const dbProduce = await Stock.findOne({ _id: req.params.id });
+      await sendNotification(
+        "Stock Details Accessed",
+        `Produce details for ${dbProduce.produceName} have been accessed for viewing.`,
+        "success"
+      );
 
-      // Send a notification for viewing stock details
-      await axios.post("http://localhost:4500/notifications", {
-        title: "Produce Details Accessed",
-        message: `Produce details for ${dbProduce.produceName} have been accessed for veiwing.`,
-        notificationType: "success",
+      res.render(`${loggedInUser.role}/stock-details`, {
+        produce: dbProduce,
+        activeSidebarLink: "stock",
+        loggedInUser,
       });
-
-      if (req.session.user.role === "administrator") {
-        res.render("administrator/stock-details", {
-          produce: dbProduce,
-          activeSidebarLink: "stock",
-          loggedInUser: loggedInUser,
-        });
-      } else if (req.session.user.role === "manager") {
-        res.render("manager/stock-details", {
-          produce: dbProduce,
-          activeSidebarLink: "stock",
-          loggedInUser: loggedInUser,
-        });
-      } else {
-        res
-          .status(403)
-          .send("Only Administrators are allowed to access this page!");
-      }
-    } catch (err) {
-      console.error("Error fetching produce details:", err);
-      res.status(400).send("Unable to find produce in the database!");
+    } catch (error) {
+      await sendNotification(
+        "Failed To View Stock",
+        "Unable to view stock details. Please try again.",
+        "error"
+      );
+      res.status(400).redirect("/all-stock");
+      console.error("Error viewing stock details:", error);
     }
   }
 );
 
-// Admin: Update stock (GET)
+// Update stock (GET)
 router.get(
   "/update-stock/:id",
   connectEnsureLogin.ensureLoggedIn(),
   async (req, res) => {
     try {
-      const loggedInUser = await User.findOne({ _id: req.session.user._id });
+      const loggedInUser = await User.findById(req.session.user._id);
 
-      if (req.session.user.role === "manager") {
-        const dbProduce = await Stock.findOne({ _id: req.params.id });
+      if (loggedInUser.role === "manager") {
+        const dbProduce = await Stock.findById(req.params.id);
 
-        // Send a notification for viewing stock details
-        await axios.post("http://localhost:4500/notifications", {
-          title: "Produce Details Accessed",
-          message: `Produce details for ${dbProduce.produceName} have been accessed for editing.`,
-          notificationType: "success",
-        });
-
+        await sendNotification(
+          "Stock Details Accessed",
+          `Produce details for ${dbProduce.produceName} have been accessed for editing.`,
+          "success"
+        );
         res.render("manager/update-stock", {
           produce: dbProduce,
           activeSidebarLink: "stock",
-          loggedInUser: loggedInUser,
+          loggedInUser,
         });
       } else {
-        res.status(403).send("Only managers are allowed to access this page!");
+        await sendNotification(
+          "Permission Denied",
+          "Only Managers are allowed to edit stock.",
+          "error"
+        );
+        res.redirect("/all-stock");
       }
-    } catch (err) {
-      console.error("Error fetching produce details:", err);
-      res.status(400).send("Unable to find produce in the database!");
+    } catch (error) {
+      await sendNotification(
+        "Failed To Edit Stock",
+        "Unable to load the stock for editing. Please try again.",
+        "error"
+      );
+      res.status(400).redirect("/all-stock");
+      console.error("Error loading stock for editing:", error);
     }
   }
 );
 
-// Admin: Update stock (POST)
+// Update stock (POST)
 router.post(
   "/update-stock",
   connectEnsureLogin.ensureLoggedIn(),
   async (req, res) => {
     try {
       if (req.session.user.role === "manager") {
-        await Stock.findOneAndUpdate({ _id: req.query.id }, req.body);
+        await Stock.findByIdAndUpdate(req.query.id, req.body);
 
-        // Send a notification for stock update
-        await axios.post("http://localhost:4500/notifications", {
-          title: "Produce Updated",
-          message: "Produce details have been updated successfully.",
-          notificationType: "success",
-        });
-
+        await sendNotification(
+          "Stock Updated",
+          "Stock details have been successfully updated.",
+          "success"
+        );
         res.redirect("/all-stock");
       } else {
-        res.status(403).send("Only managers are allowed to update a Produce!");
+        await sendNotification(
+          "Permission Denied",
+          "Only Managers are allowed to update stock.",
+          "error"
+        );
+        res.redirect("/all-stock");
       }
-    } catch (err) {
-      console.error("Error updating produce:", err);
-      res.status(400).send("Unable to update stock produce the database!");
+    } catch (error) {
+      await sendNotification(
+        "Failed To Update Stock",
+        "Unable to update stock. Please try again.",
+        "error"
+      );
+      res.status(400).redirect("/all-stock");
+      console.error("Error updating stock:", error);
     }
   }
 );
 
-// Admin: Delete stock (POST)
+// Delete stock
 router.post(
   "/delete-stock",
   connectEnsureLogin.ensureLoggedIn(),
   async (req, res) => {
     try {
       if (req.session.user.role === "manager") {
-        await Stock.deleteOne({ _id: req.body.id });
+        await Stock.findByIdAndDelete(req.body.id);
 
-        // Send a notification for stock deletion
-        await axios.post("http://localhost:4500/notifications", {
-          title: "Produce Deleted",
-          message: "A Produce has been deleted successfully.",
-          notificationType: "success",
-        });
-
-        res.redirect("all-stock");
+        await sendNotification(
+          "Stock Deleted",
+          "Stock has been successfully deleted.",
+          "success"
+        );
+        res.redirect("/all-stock");
       } else {
-        res
-          .status(403)
-          .send("Only Managers are allowed to delete a produce!");
+        await sendNotification(
+          "Permission Denied",
+          "Only Managers are allowed to delete stock.",
+          "error"
+        );
+        res.redirect("/all-stock");
       }
-    } catch (err) {
-      console.error("Error deleting produce:", err);
-      res.status(400).send("Unable to delete produce in the database!");
+    } catch (error) {
+      await sendNotification(
+        "Failed To Delete Stock",
+        "Unable to delete stock. Please try again.",
+        "error"
+      );
+      res.status(400).redirect("/all-stock");
+      console.error("Error deleting stock:", error);
     }
   }
 );

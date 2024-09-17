@@ -12,7 +12,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
   form.addEventListener("submit", function (event) {
     let isValid = true;
-    let errorMessage = "Failed to make new Sale!!!\n";
+
+    // Clear previous styles
+    produceNameInput.style = "border: 1px #087001 solid";
+    produceTypeInput.style = "border: 1px #087001 solid";
+    tonnageSoldInput.style = "border: 1px #087001 solid";
+    amountPaidInput.style = "border: 1px #087001 solid";
+    buyerNameInput.style = "border: 1px #087001 solid";
+    buyerEmailInput.style = "border: 1px #087001 solid";
+    buyerPhoneInput.style = "border: 1px #087001 solid";
+    dateSoldInput.style = "border: 1px #087001 solid";
+
+    let errorMessage = "Failed to submit!\n";
 
     // Clear previous messages
     invalidationMessage.textContent = "";
@@ -41,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
       amountPaidInput.style = "border: 1px #ef1515 solid";
     }
 
-    if (!buyerNameInput.value.trim() || buyerNameInput.value.trim() < 2) {
+    if (!buyerNameInput.value.trim() || buyerNameInput.value.trim().length < 2) {
       isValid = false;
       errorMessage += "Buyer / Customer Name should be 2 or more characters and is required.\n";
       buyerNameInput.style = "border: 1px #ef1515 solid";

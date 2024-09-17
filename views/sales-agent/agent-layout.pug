@@ -1,0 +1,102 @@
+doctype html
+head
+  meta(charset='utf-8')
+  meta(content='width=device-width, initial-scale=1.0' name='viewport')
+  title Sales Agent - Happy Hoe Groceries Limited
+  meta(content='' name='description')
+  meta(content='' name='keywords')
+
+  link(href='/img/favicon.png' rel='icon')
+  link(href='/img/apple-touch-icon.png' rel='apple-touch-icon')
+
+  link(href='https://fonts.gstatic.com' rel='preconnect')
+  link(href='https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i' rel='stylesheet')
+
+  link(href='/bootstrap/css/bootstrap.min.css' rel='stylesheet')
+  link(href='/bootstrap/bootstrap-icons/bootstrap-icons.css' rel='stylesheet')
+  link(href='/css/dashboard-layout.css' rel='stylesheet')
+
+header#header.header.fixed-top.d-flex.align-items-center
+  .logo.d-flex.align-items-center.logo-container
+    a(href='dashboard.html')
+      img(src='/img/logo.png' alt='logo')
+    span.badge= `${loggedInUser.branch} branch`
+
+  nav.header-nav.ms-auto
+    ul.d-flex.align-items-center
+      li.nav-item.dropdown.pe-3
+        a.nav-link.nav-profile.d-flex.align-items-center.pe-0(href='#' data-bs-toggle='dropdown')
+          img.rounded-circle(src=(loggedInUser.profileImage ? loggedInUser.profileImage : '/img/profile-img.png') alt="Profile Image")
+          span.d-none.d-md-block.dropdown-toggle.ps-2
+
+        ul.dropdown-menu.dropdown-menu-end.dropdown-menu-arrow.profile
+          li.dropdown-header
+            h6= loggedInUser.userName
+            span= loggedInUser.role
+            br
+            span= `${loggedInUser.branch} branch`
+          li
+            hr.dropdown-divider
+          li
+            a.dropdown-item.d-flex.align-items-center(href='/profile')
+              i.bi.bi-person
+              span My Profile
+          li
+            hr.dropdown-divider
+          li
+            a.dropdown-item.d-flex.align-items-center(href='/logout')
+              i.bi.bi-box-arrow-right
+              span Log Out
+
+      li
+        i.bi.bi-list.toggle-sidebar-btn
+
+aside#sidebar.sidebar
+  ul#sidebar-nav.sidebar-nav
+    li.nav-item(class=(activeSidebarLink === 'dashdoard' ? 'active' : ''))
+      a.nav-link(href='/dashboard')
+        i.bi.bi-grid
+        span Dashboard
+    li.nav-heading Sales
+    li.nav-item(class=(activeSidebarLink === 'sales' ? 'active' : ''))
+      a.nav-link(href='/all-sales')
+        i.bi.bi-cash-coin
+        span All Sales
+    li.nav-item(class=(activeSidebarLink === 'credit-sales' ? 'active' : ''))
+      a.nav-link(href='/all-credit-sales')
+        i.bi.bi-credit-card
+        span All Credit Sales
+    li.nav-heading Stock
+    li.nav-item(class=(activeSidebarLink === 'stock' ? 'active' : ''))
+      a.nav-link(href='/all-stock')
+        i.bi.bi-boxes
+        span All Stock
+    li.nav-heading Account
+    li.nav-item(class=(activeSidebarLink === 'profile' ? 'active' : ''))
+      a.nav-link(href='/profile')
+        i.bi.bi-person-circle
+        span My Profile
+    li.nav-item
+      a.nav-link(href='/logout')
+        i.bi.bi-box-arrow-right
+        span Log Out
+
+main.page-content
+  block content
+
+div#notification-container
+
+footer.footer
+  | &copy; 2024 
+  strong
+    span Happy Hoe Groceries Limited
+  | . All Rights Reserved
+
+a.back-to-top.d-flex.align-items-center.justify-content-center(href='#')
+  i.bi.bi-arrow-up-short
+
+script(src='/bootstrap/js/bootstrap.bundle.min.js')
+script(src='/js/main.js')
+script(src='/js/notifications.js')
+
+block scripts

@@ -1,7 +1,7 @@
 extends admin-layout.pug
 
 block scripts
-  script(src='/js/form-validations/edit-user.js')
+  script(src='/js/form-validations/user.js')
   
 block content
   .pagetitle
@@ -32,14 +32,14 @@ block content
               option(value="") Assign Role
               option(value='administrator' selected=user.role === 'administrator') administrator
               option(value='manager' selected=user.role === 'manager') manager
-              option(value='salesAgent' selected=user.role === 'salesAgent') salesAgent
+              option(value='sales-agent' selected=user.role === 'sales-agent') sales agent
           .mb-2
             label(for='branch') Branch:
-            select#branch(name='branch')
-              option(value="") Allocate Branch
-              option(value='1' selected=user.branch === '1') Branch 1
-              option(value='2' selected=user.branch === '2') Branch 2
-              option(value='3' selected=user.branch === '3') Branch 3
+            if branches.length
+              select#branch(name='branch')
+                option(selected value="") Allocate Branch
+                each branch in branches
+                  option(value=branch.branchName) #{branch.branchName}
         .col-md-6
           .mb-2
             label(for='dateAdded') Date Updated (Read Only):

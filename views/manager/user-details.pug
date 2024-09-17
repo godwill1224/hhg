@@ -1,0 +1,50 @@
+extends manager-layout.pug
+
+block scripts
+  script(src='/js/modal.js')
+
+block content
+  .pagetitle
+    h1 Staff Details
+    nav
+      ol.breadcrumb
+        li.breadcrumb-item
+          a(href='/dashboard') Dashboard
+        li.breadcrumb-item
+          a(href='/all-users') All Staff
+        li.breadcrumb-item.active Staff Details
+  .card.profile-card
+    .row
+      .col-lg-3.col-md-4.profile-img
+        img(src=(user.profileImage ? user.profileImage : '/img/profile-img.png') alt="Profile Image")
+      .col-lg-9.col-md-8
+        .pb-4.mb-2.mt-4.mt-lg-0.profile-header
+          h3
+            strong= user.userName
+          p= user.role 
+            br 
+            span= `${user.branch} branch`
+        .row.mb-2.profile-info
+          .col-lg-3
+            span
+              strong Bio:
+          .col-lg-9
+            span.bio= user.bio
+        .row.mb-2.profile-info
+          .col-lg-3
+            span
+              strong Email:
+          .col-lg-9
+            span= user.email
+        .row.mb-2.profile-info
+          .col-lg-3
+            span
+              strong Phone:
+          .col-lg-9
+            span= user.phoneNumber
+        .row.mb-2.profile-info
+          .col-lg-3
+            span
+              strong Last Updated:
+          .col-lg-9
+            span= moment(user.dateAdded).format('YYYY-MM-DD (h:mm A)')

@@ -1,7 +1,7 @@
 const express = require("express");
 const passport = require("passport");
 const router = express.Router();
-const axios = require("axios"); // For making HTTP requests
+const { sendNotification } = require("../utils/notificationService");
 
 // Login Routes
 router.get("/login", (req, res) => {
@@ -14,17 +14,8 @@ router.post("/login", async (req, res, next) => {
       return next(err);
     }
     if (!user) {
-      // Send a failure notification via the API
-      try {
-        await axios.post("http://localhost:4500/notifications", {
-          title: "Login Failed",
-          message: "Invalid username or password.",
-          notificationType: "error",
-        });
-      } catch (error) {
-        console.error("Error sending failure notification:", error);
-      }
-
+      // Send a failure notification
+      await sendNotification("Login Failed", "Invalid username or password.", "error");
       return res.redirect("/login");
     }
 
@@ -37,12 +28,8 @@ router.post("/login", async (req, res, next) => {
       req.session.user = req.user;
 
       try {
-        // Send a success notification via the API
-        await axios.post("http://localhost:4500/notifications", {
-          title: "Login Successful",
-          message: `Welcome ${req.user.userName}!`,
-          notificationType: "success",
-        });
+        // Send a success notification
+        await sendNotification("Login Successful", `Welcome ${req.user.userName}!`, "success");
 
         // Redirect based on the user's role
         if (req.user.role === "administrator") {
@@ -50,15 +37,12 @@ router.post("/login", async (req, res, next) => {
         } else if (req.user.role === "manager") {
           res.redirect("/all-stock");
         } else if (req.user.role === "sales-agent") {
-          res.redirect("/sales-agent-dashboard-page");
-        } else {
-          res.send("User with that role does not exist in the system!");
+          res.redirect("/all-stock");
         }
+        
       } catch (error) {
         console.error("Error sending success notification:", error);
-        res
-          .status(500)
-          .send("Login successful, but failed to send notification.");
+        res.status(500).send("Login successful, but failed to send notification.");
       }
     });
   })(req, res, next);
@@ -72,21 +56,15 @@ router.get("/logout", async (req, res) => {
         return res.status(500).send("Error logging out!");
       }
 
-      // Send a logout success notification via the API
-      try {
-        await axios.post("http://localhost:4500/notifications", {
-          title: "Logout Successful",
-          message: "You have successfully logged out.",
-          notificationType: "success",
-        });
-      } catch (error) {
-        console.error("Error sending logout notification:", error);
-      }
+      // Send a logout success notification
+      await sendNotification("Logout Successful", "You have successfully logged out.", "success");
 
       res.redirect("/");
     });
   } else {
-    res.send("You do not have a session!");
+    await sendNotification("Logout Failed", "You do not have a session.", "error");
+
+    res.redirect("/");
   }
 });
 

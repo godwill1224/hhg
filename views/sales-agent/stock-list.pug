@@ -1,0 +1,52 @@
+extends agent-layout.pug
+
+block scripts
+  script.
+    // Embed the users data from the server into a JavaScript variable
+    const allStock = !{JSON.stringify(stock)};
+  script(src='/js/tables/agent/stock.js')
+
+block content
+  .pagetitle
+    div
+      h1 All Stock
+      nav
+        ol.breadcrumb
+          li.breadcrumb-item
+            a(href='/dashboard') Dashboard
+          li.breadcrumb-item.active All Stock
+  .table-container
+    .controls
+      .searchInput
+        input#searchInput(type='text' placeholder='search produce by name, type, storage branch or agent / manager name...')
+      div
+        select#entriesPerPage
+          option(value='5') 5 Entries
+          option(value='10') 10 Entries
+          option(value='15') 15 Entries
+          option(value='20') 20 Entries
+    table#dataTable
+      thead
+        tr
+          th Name
+          th Type
+          th Tonnage (Kg)
+          th Cost / Kg (USh)
+          th Storage Branch
+          th Added by
+          th Last Updated
+          th Actions
+      tbody
+
+    p#noResultsMessage(style='display:none;') No results found.
+    #pagination
+
+  .modal#deleteModal
+    .modal-dialog
+      .modal-content
+        .mdl-body
+          h5 Confirm Deletion!
+          p Are you sure you want to delete this produce?
+        .mdl-footer
+          button(type='button' class='action-btn view-btn' id='cancelDelete') Cancel
+          button(type='button' class='action-btn del-btn' id='confirmDelete') Delete

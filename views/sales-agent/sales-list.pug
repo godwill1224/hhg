@@ -1,0 +1,57 @@
+extends agent-layout.pug
+
+block scripts
+  script.
+    // Embed the users data from the server into a JavaScript variable
+    const allSales = !{JSON.stringify(sales)};
+  script(src='/js/tables/agent/sale.js')
+
+block content
+  .pagetitle
+    .d-flex.justify-content-between.align-items-center
+      div
+        h1 All Branch Sales
+        nav
+          ol.breadcrumb
+            li.breadcrumb-item
+              a(href='/dashboard') Dashboard
+            li.breadcrumb-item.active Sales List
+      div
+        a.button(href='/add-sale')
+          i.bi.bi-plus-lg
+          |  New
+  .table-container
+    .controls
+      .searchInput
+        input#searchInput(type='text' placeholder='search sale by produce name, sale branch or agent / manager name...')
+      div
+        select#entriesPerPage
+          option(value='5') 5 Entries
+          option(value='10') 10 Entries
+          option(value='15') 15 Entries
+          option(value='20') 20 Entries
+    table#dataTable
+      thead
+        tr
+          th Produce Name
+          th Tonnage (Kg)
+          th Amt / Kg (USh)
+          th Tot Amt (USh)
+          th Sold On
+          th Sale Branch
+          th Sold By
+          th Actions
+      tbody
+
+    p#noResultsMessage(style='display:none;') No sales records found!
+    #pagination
+
+  .modal#deleteModal
+    .modal-dialog
+      .modal-content
+        .mdl-body
+          h5 Confirm Deletion!
+          p Are you sure you want to delete this sale record?
+        .mdl-footer
+          button(type='button' class='action-btn view-btn' id='cancelDelete') Cancel
+          button(type='button' class='action-btn del-btn' id='confirmDelete') Delete

@@ -6,12 +6,12 @@ block scripts
 block content
   .pagetitle
     div
-      h1 All Stock
+      h1 Profile
       nav
         ol.breadcrumb
           li.breadcrumb-item
             a(href='/dashboard') Dashboard
-          li.breadcrumb-item.active All Stock
+          li.breadcrumb-item.active Profile
   .card.profile-card
     .row
       .col-lg-3.col-md-4.profile-img
@@ -42,7 +42,7 @@ block content
           .col-lg-9
             span= loggedInUser.phoneNumber
 
-  .card
+  .card.edit-profile
     h3 
       strong Edit Profile
     form(action=`/profile?id=${loggedInUser._id}` enctype="multipart/form-data" method="POST")

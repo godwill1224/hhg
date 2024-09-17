@@ -1,7 +1,7 @@
 extends manager-layout.pug
 
 block scripts
-  script(src='/js/form-validations/add-stock.js')
+  script(src='/js/form-validations/stock.js')
 
 block content
   .pagetitle
@@ -43,7 +43,7 @@ block content
           .mb-2
             label(for='sellingPrice') Selling Price / Kg (USh):
             input#sellingPrice(name='sellingPrice' type='number' placeholder='Enter Selling Price' value=produce.sellingPrice)
-          .mb-4
+          .mb-2
             label(for='dateAdded') Date Updated (Read Only):
             input#dateAdded(name='dateAdded' type='datetime-local' value=(new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0,16)))
         .col-md-6

@@ -1,0 +1,45 @@
+extends manager-layout.pug
+
+block scripts
+  script.
+    // Embed the users data from the server into a JavaScript variable
+    const allUsers = !{JSON.stringify(users)};
+  script(src='/js/tables/manager/user.js')
+
+block content
+  .pagetitle
+    .d-flex.justify-content-between.align-items-center
+      div
+        h1 All Branch Staff 
+        nav
+          ol.breadcrumb
+            li.breadcrumb-item
+              a(href='/dashboard') Dashboard
+            li.breadcrumb-item.active All Staff
+      div
+        a.button(href='/add-user')
+          i.bi.bi-plus-lg
+          |  New
+  .table-container
+    .controls
+      .searchInput
+        input#searchInput(type='text' placeholder='search users by name or email address...')
+      div
+        select#entriesPerPage
+          option(value='5') 5 Entries
+          option(value='10') 10 Entries
+          option(value='15') 15 Entries
+          option(value='20') 20 Entries
+    table#dataTable
+      thead
+        tr
+          th Image
+          th User Name
+          th Role
+          th Branch
+          th Email
+          th Actions
+      tbody
+
+    p#noResultsMessage(style='display:none;') No results found.
+    #pagination

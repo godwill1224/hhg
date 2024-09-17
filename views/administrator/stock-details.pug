@@ -11,23 +11,22 @@ block content
           a(href='/all-stock') Stock List
         li.breadcrumb-item.active Produce Details
   .card.stock-card
-    .stock-card-header.row
-      .mb-2
-        h4
-          strong Revenue Projections
-      .col-lg-4.col-md-4.p-2.stock-header
-        h3.error
+    .mb-2
+      h4
+        strong Revenue Projections
+    .stock-card-header
+      .stock-header.error
+        h3
           strong= new Intl.NumberFormat('en-UG', { style: 'currency', currency: 'UGX', minimumFractionDigits: 0 }).format(produce.tonnage * produce.produceCost)
-        p.error Total Cost
-      .col-lg-4.col-md-4.p-2.stock-header
+        p Total Cost
+      .stock-header.warning
         h3
           strong= new Intl.NumberFormat('en-UG', { style: 'currency', currency: 'UGX', minimumFractionDigits: 0 }).format(produce.tonnage * produce.sellingPrice)
-        p Total Income
-      .col-lg-4.col-md-4.p-2.stock-header
-        h3.success
+        p Expected Income
+      .stock-header.success
+        h3
           strong= new Intl.NumberFormat('en-UG', { style: 'currency', currency: 'UGX', minimumFractionDigits: 0 }).format((produce.tonnage * produce.sellingPrice) - (produce.tonnage * produce.produceCost))
-        p.success Total Profit
-
+        p Expected Profit
     .stock-card-body
       .mb-2
         h4

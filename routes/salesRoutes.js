@@ -1,10 +1,27 @@
 const express = require("express");
 const router = express.Router();
 const connectEnsureLogin = require("connect-ensure-login");
-const axios = require("axios");
 const moment = require("moment");
 const User = require("../models/user");
 const Sale = require("../models/sale");
+const { sendNotification } = require("../utils/notificationService");
+
+// Common logic to fetch user and sales based on role
+const fetchSalesByRole = async (loggedInUser) => {
+  let salesQuery = {};
+
+  if (loggedInUser.role === "manager") {
+    salesQuery = { saleBranch: loggedInUser.branch };
+  } else if (loggedInUser.role === "sales-agent") {
+    salesQuery = { soldBy: loggedInUser._id };
+  }
+
+  const sortedSales = await Sale.find(salesQuery).sort({ $natural: -1 });
+  return sortedSales.map((sale) => ({
+    ...sale._doc,
+    formattedDate: moment(sale.dateSold).format("YYYY-MM-DD (h:mm A)"),
+  }));
+};
 
 // Get all Sales
 router.get(
@@ -12,73 +29,28 @@ router.get(
   connectEnsureLogin.ensureLoggedIn(),
   async (req, res) => {
     try {
-      const loggedInUser = await User.findOne({ _id: req.session.user._id });
-      let salesQuery = {};
+      const loggedInUser = await User.findById(req.session.user._id);
+      const formattedSales = await fetchSalesByRole(loggedInUser);
 
-      // Check user role and adjust the sales query accordingly
-      if (loggedInUser.role === "administrator") {
-        // Administrator: Can see all sales
-        salesQuery = {};
-      } else if (loggedInUser.role === "manager") {
-        // Manager: Can only see sales from their branch
-        salesQuery = { saleBranch: loggedInUser.branch };
-      } else if (loggedInUser.role === "sales-agent") {
-        // Sales Agent: Can only see sales made by themselves
-        salesQuery = { soldBy: loggedInUser._id };
-      } else {
-        // Handle unauthorized access
-        return res
-          .status(403)
-          .send("You are not authorized to view this page!");
-      }
+      await sendNotification(
+        "Sales List Accessed",
+        `You have accessed the sales list as a ${loggedInUser.role}.`,
+        "success"
+      );
 
-      // Fetch sales based on the query and sort by date
-      const sales = await Sale.find(salesQuery).sort({ $natural: -1 });
-
-      // Format the date using Moment.js
-      const formattedSales = sales.map((sale) => {
-        const { dateSold } = sale;
-        return {
-          ...sale._doc,
-          formattedDate: moment(dateSold).format("YYYY-MM-DD (h:mm A)"),
-        };
+      res.render(`${loggedInUser.role}/sales-list`, {
+        sales: formattedSales,
+        activeSidebarLink: "sales",
+        loggedInUser,
       });
-
-      // Send notification
-      await axios.post("http://localhost:4500/notifications", {
-        title: "Sales List Accessed",
-        message: `You have accessed the sales list as a ${loggedInUser.role}.`,
-        notificationType: "success",
-      });
-
-      // Check user role and adjust the sales query accordingly
-      if (loggedInUser.role === "administrator") {
-        res.render("administrator/sales-list", {
-          sales: formattedSales,
-          activeSidebarLink: "sales",
-          loggedInUser: loggedInUser,
-        });
-      } else if (req.session.user.role === "manager") {
-        res.render("manager/sales-list", {
-          sales: formattedSales,
-          activeSidebarLink: "sales",
-          loggedInUser: loggedInUser,
-        });
-      } else if (req.session.user.role === "sales-agent") {
-        res.render("sales-agent/sales-list", {
-          sales: formattedSales,
-          activeSidebarLink: "sales",
-          loggedInUser: loggedInUser,
-        });
-      } else {
-        // Handle unauthorized access
-        return res
-          .status(403)
-          .send("You are not authorized to view this page!");
-      }
     } catch (error) {
+      await sendNotification(
+        "Failed To Get All Sales",
+        "Unable to retrieve sales data. Please try again.",
+        "error"
+      );
+      res.status(400).redirect("/dashboard");
       console.error("Error fetching sales:", error);
-      res.status(400).send("Unable to find sales in your database!");
     }
   }
 );
@@ -89,199 +61,252 @@ router.get(
   connectEnsureLogin.ensureLoggedIn(),
   async (req, res) => {
     try {
-      const loggedInUser = await User.findOne({ _id: req.session.user._id });
+      const loggedInUser = await User.findById(req.session.user._id);
 
-      if (req.session.user.role === "manager") {
-        res.render("manager/add-sale", {
+      if (["manager", "sales-agent"].includes(loggedInUser.role)) {
+        res.render(`${loggedInUser.role}/add-sale`, {
           activeSidebarLink: "sales",
-          loggedInUser: loggedInUser,
-        });
-      } else if (req.session.user.role === "sales-agent") {
-        res.render("sales-agent/add-sale", {
-          activeSidebarLink: "sales",
-          loggedInUser: loggedInUser,
+          loggedInUser,
         });
       } else {
-        res
-          .status(403)
-          .send("Only managers and agents are allowed to access this page!");
+        await sendNotification(
+          "Permission Denied",
+          "Only managers and sales agents are allowed to make a sale.",
+          "error"
+        );
+        res.redirect("/all-sales");
       }
     } catch (error) {
-      console.error("Error fetching user", error);
-      res.status(400).send("Unable to find user in your database!");
+      await sendNotification(
+        "Failed To Add Sale",
+        "Unable to add new sale. Please try again.",
+        "error"
+      );
+      res.status(400).redirect("/dashboard");
+      console.error("Error adding sale:", error);
     }
   }
 );
 
-// Admin: Add new sale (POST)
+// Add new credit sale (POST)
 router.post(
   "/add-sale",
   connectEnsureLogin.ensureLoggedIn(),
   async (req, res) => {
     try {
-      if (
-        req.session.user.role === "manager" ||
-        req.session.user.role === "sales-agent"
-      ) {
+      if (["manager", "sales-agent"].includes(req.session.user.role)) {
         const newSale = new Sale(req.body);
         await newSale.save();
 
-        // Send a notification for sale addition
-        await axios.post("http://localhost:4500/notifications", {
-          title: "Sale Record Added",
-          message: "A new sale has been successfully made.",
-          notificationType: "success",
-        });
+        await sendNotification(
+          "Sale Record Added",
+          "A new sale has been successfully made.",
+          "success"
+        );
 
         res.redirect("/all-sales");
       } else {
-        res
-          .status(403)
-          .send("Only managers and sales agents are allowed to make a sale!");
+        await sendNotification(
+          "Permission Denied",
+          "Only managers and sales agents are allowed to make a sale.",
+          "error"
+        );
+        res.redirect("/all-sales");
       }
-    } catch (err) {
-      console.error("Add sale error:", err);
-      res.status(400).render("administrator/add-sale", {
-        error: "Failed to add sale. Please try again.",
-      });
+    } catch (error) {
+      await sendNotification(
+        "Failed To Add Sale",
+        "Failed to add new sale record. Please try again.",
+        "error"
+      );
+      res.status(400).redirect("/dashboard");
+      console.error("Error adding sale:", error);
     }
   }
 );
 
-// View sale
+// View sale details
 router.get(
   "/view-sale/:id",
   connectEnsureLogin.ensureLoggedIn(),
   async (req, res) => {
     try {
-      const loggedInUser = await User.findOne({ _id: req.session.user._id });
+      const loggedInUser = await User.findById(req.session.user._id);
+      const dbSale = await Sale.findById(req.params.id);
 
-      const dbSale = await Sale.findOne({ _id: req.params.id });
+      await sendNotification(
+        "Sale Details Accessed",
+        `Sale details for ${dbSale.produceName} have been accessed for viewing.`,
+        "success"
+      );
 
-      // Send a notification for viewing sale details
-      await axios.post("http://localhost:4500/notifications", {
-        title: "Sale Details Accessed",
-        message: `Sale details for ${dbSale.produceName} have been accessed for veiwing.`,
-        notificationType: "success",
+      res.render(`${loggedInUser.role}/sale-details`, {
+        sale: dbSale,
+        activeSidebarLink: "sales",
+        loggedInUser,
       });
-
-      if (loggedInUser.role === "administrator") {
-        res.render("administrator/sale-details", {
-          sale: dbSale,
-          activeSidebarLink: "sales",
-          loggedInUser: loggedInUser,
-        });
-      } else if (loggedInUser.role === "manager") {
-        res.render("manager/sale-details", {
-          sale: dbSale,
-          activeSidebarLink: "sales",
-          loggedInUser: loggedInUser,
-        });
-      } else if (loggedInUser.role === "sales-agent") {
-        res.render("sales-agent/sale-details", {
-          sale: dbSale,
-          activeSidebarLink: "sales",
-          loggedInUser: loggedInUser,
-        });
-      } else {
-        res.status(403).send("You are not allowed to access this page!");
-      }
-    } catch (err) {
-      console.error("Error fetching sale details:", err);
-      res.status(400).send("Unable to find sale in the database!");
+    } catch (error) {
+      await sendNotification(
+        "Failed To View Sale",
+        "Unable to view sale record. Please try again.",
+        "error"
+      );
+      res.status(400).redirect("/all-sales");
+      console.error("Error viewing sale:", error);
     }
   }
 );
 
-// Admin: Update sale (GET)
+// Update sale
 router.get(
   "/update-sale/:id",
   connectEnsureLogin.ensureLoggedIn(),
   async (req, res) => {
     try {
-      const loggedInUser = await User.findOne({ _id: req.session.user._id });
+      const loggedInUser = await User.findById(req.session.user._id);
+      const dbSale = await Sale.findById(req.params.id);
 
-      if (req.session.user.role === "administrator") {
-        const dbSale = await Branch.findOne({ _id: req.params.id });
+      if (["manager", "sales-agent"].includes(loggedInUser.role)) {
+        await sendNotification(
+          "Sale Details Accessed",
+          `Sale details for ${dbSale.produceName} have been accessed for editing.`,
+          "success"
+        );
 
-        // Send a notification for viewing sale details
-        await axios.post("http://localhost:4500/notifications", {
-          title: "Sale Details Accessed",
-          message: `Sale details for ${dbSale.produceName} have been accessed for editing.`,
-          notificationType: "success",
-        });
-
-        res.render("administrator/update-sale", {
+        res.render(`${loggedInUser.role}/update-sale`, {
           sale: dbSale,
           activeSidebarLink: "sales",
-          loggedInUser: loggedInUser,
+          loggedInUser,
         });
       } else {
-        res
-          .status(403)
-          .send("Only Administrators are allowed to access this page!");
+        await sendNotification(
+          "Permission Denied",
+          "Only managers and sales agents are allowed to edit a sale.",
+          "error"
+        );
+        res.redirect("/all-sales");
       }
-    } catch (err) {
-      console.error("Error fetching sale details:", err);
-      res.status(400).send("Unable to find sale in the database!");
+    } catch (error) {
+      await sendNotification(
+        "Failed To Fetch Sale",
+        "Unable to fetch sale record. Please try again.",
+        "error"
+      );
+      res.status(400).redirect("/all-sales");
+      console.error("Error fetching sale:", error);
     }
   }
 );
 
-// Admin: Update sale (POST)
+// Update Sale (POST)
 router.post(
   "/update-sale",
   connectEnsureLogin.ensureLoggedIn(),
   async (req, res) => {
     try {
-      if (req.session.user.role === "administrator") {
-        await Branch.findOneAndUpdate({ _id: req.query.id }, req.body);
+      if (["manager", "sales-agent"].includes(req.session.user.role)) {
+        await Sale.findByIdAndUpdate(req.query.id, req.body);
 
-        // Send a notification for sale update
-        await axios.post("http://localhost:4500/notifications", {
-          title: "Branch Updated",
-          message: "Branch details have been updated successfully.",
-          notificationType: "success",
-        });
-
+        await sendNotification(
+          "Sale Record Updated",
+          "Sale details have been successfully updated.",
+          "success"
+        );
         res.redirect("/all-sales");
       } else {
-        res
-          .status(403)
-          .send("Only Administrators are allowed to update a branch!");
+        await sendNotification(
+          "Permission Denied",
+          "Only managers and sales agents are allowed to edit a sale.",
+          "error"
+        );
+        res.redirect("/all-sales");
       }
-    } catch (err) {
-      console.error("Error updating stock:", err);
-      res.status(400).send("Unable to update stock in the database!");
+    } catch (error) {
+      await sendNotification(
+        "Failed To Edit Sale",
+        "Unable to edit sale record. Please try again.",
+        "error"
+      );
+      res.status(400).redirect("/all-sales");
+      console.error("Error editing sale:", error);
     }
   }
 );
 
-// Admin: Delete stock (POST)
+// Delete sale record
 router.post(
-  "/delete-stock",
+  "/delete-sale",
   connectEnsureLogin.ensureLoggedIn(),
   async (req, res) => {
     try {
-      if (req.session.user.role === "administrator") {
-        await Branch.deleteOne({ _id: req.body.id });
+      if (["manager", "sales-agent"].includes(req.session.user.role)) {
+        await Sale.findByIdAndDelete(req.body.id);
 
-        // Send a notification for stock deletion
-        await axios.post("http://localhost:4500/notifications", {
-          title: "Branch Deleted",
-          message: "A branch has been deleted successfully.",
-          notificationType: "success",
-        });
-
-        res.redirect("back");
+        await sendNotification(
+          "Sale Record Deleted",
+          "Sale record has been successfully deleted.",
+          "success"
+        );
+        res.redirect("/all-sales");
       } else {
-        res
-          .status(403)
-          .send("Only Administrators are allowed to delete a stocks!");
+        await sendNotification(
+          "Permission Denied",
+          "Only managers and sales agents are allowed to delete a sale.",
+          "error"
+        );
+        res.redirect("/all-sales");
       }
-    } catch (err) {
-      console.error("Error deleting stock:", err);
-      res.status(400).send("Unable to delete stock in the database!");
+    } catch (error) {
+      await sendNotification(
+        "Failed To Delete Sale",
+        "Unable to delete sale record. Please try again.",
+        "error"
+      );
+      res.status(400).redirect("/all-sales");
+      console.error("Error deleting sale:", error);
+    }
+  }
+);
+
+// Generate receipt
+router.get(
+  "/receipt/:id",
+  connectEnsureLogin.ensureLoggedIn(),
+  async (req, res) => {
+    try {
+      const loggedInUser = await User.findById(req.session.user._id);
+      const dbSale = await Sale.findById(req.params.id);
+
+      if (["manager", "sales-agent"].includes(loggedInUser.role)) {
+        if (!dbSale) {
+          await sendNotification(
+            "Sale Record Not Found",
+            "Failed to find the sale record. Please try again.",
+            "error"
+          );
+          return res.status(400).redirect("/all-sales");
+        }
+        res.render(`${loggedInUser.role}/receipt`, {
+          sale: dbSale,
+          activeSidebarLink: "sales",
+          loggedInUser,
+        });
+      } else {
+        await sendNotification(
+          "Permission Denied",
+          "Only managers and sales agents are allowed to generate a sale reciept.",
+          "error"
+        );
+        res.redirect("/all-sales");
+      }
+    } catch (error) {
+      await sendNotification(
+        "Failed To Generate Receipt",
+        "Unable to generate a sale receipt. Please try again.",
+        "error"
+      );
+      res.status(400).redirect("/all-sales");
+      console.error("Error generating receipt:", error);
     }
   }
 );

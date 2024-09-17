@@ -13,7 +13,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
   form.addEventListener("submit", function (event) {
     let isValid = true;
-    let errorMessage = "Failed to add new Produce!!!\n";
+
+    // Clear previous styles
+    produceNameInput.style = "border: 1px #087001 solid";
+    produceTypeInput.style = "border: 1px #087001 solid";
+    tonnageInput.style = "border: 1px #087001 solid";
+    produceCostInput.style = "border: 1px #087001 solid";
+    sellingPriceInput.style = "border: 1px #087001 solid";
+    dealerNameInput.style = "border: 1px #087001 solid";
+    dealerEmailInput.style = "border: 1px #087001 solid";
+    dealerPhoneInput.style = "border: 1px #087001 solid";
+    dateAddedInput.style = "border: 1px #087001 solid"
+
+    let errorMessage = "Failed to submit!\n";
 
     // Clear previous messages
     invalidationMessage.textContent = "";
@@ -36,9 +48,9 @@ document.addEventListener("DOMContentLoaded", () => {
       tonnageInput.style = "border: 1px #ef1515 solid";
     }
 
-    if (!produceCostInput.value.trim() || produceCostInput.value.trim().length < 5 ) {
+    if (!produceCostInput.value.trim() || produceCostInput.value.trim().length < 4 ) {
       isValid = false;
-      errorMessage += "Produce Cost should be 5 or more characters and is required.\n";
+      errorMessage += "Produce Cost should be 4 or more characters and is required.\n";
       produceCostInput.style = "border: 1px #ef1515 solid";
     }
 
@@ -48,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
       sellingPriceInput.style = "border: 1px #ef1515 solid";
     }
 
-    if (!dealerNameInput.value.trim() || dealerNameInput.value.trim() < 2) {
+    if (!dealerNameInput.value.trim() || dealerNameInput.value.trim().length  < 2) {
       isValid = false;
       errorMessage += "Dealer's Name should be 2 or more characters and is required.\n";
       dealerNameInput.style = "border: 1px #ef1515 solid";

@@ -66,9 +66,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const filteredData = data.filter(
       (item) =>
         item.produceName.toLowerCase().includes(searchTerm) ||
-        item.storagebranch.toLowerCase().includes(searchTerm) ||
-        item.produceType.toLowerCase().includes(searchTerm)||
-        item.addedBy.toLowerCase().includes(searchTerm)
+        item.dispatchBranch.toLowerCase().includes(searchTerm) ||
+        item.dispatchedBy.toLowerCase().includes(searchTerm)
     );
     renderTable(filteredData, 1);
   });

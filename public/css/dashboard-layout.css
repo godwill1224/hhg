@@ -6,7 +6,7 @@
 body {
   font-family: "Open Sans", sans-serif;
   background: #f9fefa;
-  color: #087001;
+  color: #0f5d09;
 }
 
 a {
@@ -53,7 +53,7 @@ h6 {
   font-size: 14px;
   transition: all 0.3s;
   text-align: center;
-  color: #087001;
+  color: #0f5d09;
   margin-top: 60px;
 }
 
@@ -206,13 +206,15 @@ h6 {
 .header .toggle-sidebar-btn {
   font-size: 24px;
   cursor: pointer;
-  color: #087001;
+  color: #0f5d09;
 }
 
 .header .badge {
   background-color: #0ed145;
   color: #fff;
   padding: 6px 10px;
+  font-size: 16px;
+  font-weight: 600;
 }
 
 .header-nav ul {
@@ -226,13 +228,13 @@ h6 {
 
 .header-nav .nav-icon {
   font-size: 22px;
-  color: #087001;
+  color: #0f5d09;
   margin-right: 25px;
   position: relative;
 }
 
 .header-nav .nav-profile {
-  color: #087001;
+  color: #0f5d09;
 }
 
 .header-nav .nav-profile img {
@@ -359,7 +361,7 @@ h6 {
   align-items: center;
   font-size: 14px;
   font-weight: 500;
-  color: #087001;
+  color: #0f5d09;
   transition: 0.3;
   padding: 6px 12px;
   border-radius: 4px;
@@ -369,7 +371,7 @@ h6 {
 .sidebar-nav .nav-link i {
   font-size: 18px;
   margin-right: 10px;
-  color: #087001;
+  color: #0f5d09;
 }
 
 .sidebar-nav .nav-link:hover {
@@ -493,7 +495,7 @@ h6 {
 .nav-tabs-bordered .nav-link {
   margin-bottom: -2px;
   border: none;
-  color: #087001;
+  color: #0f5d09;
   font-weight: 600;
 }
 
@@ -544,13 +546,13 @@ h6 {
   font-size: 24px;
   margin-bottom: 0;
   font-weight: 700;
-  color: #087001;
+  color: #0f5d09;
 }
 
 /* Card */
 .card {
   margin-bottom: 30px;
-  color: #087001;
+  color: #0f5d09;
   border: none;
   border-radius: 5px;
   background: #fff;
@@ -694,7 +696,7 @@ input, textarea, select, input[type="file"] {
   box-shadow: none;
   font-size: 14px;
   background: none;
-  border: 1px #087001 solid;
+  border: 1px #0f5d09 solid;
   transition: 0.3s;
   padding: 8px;
   margin: 10px 0;
@@ -737,7 +739,7 @@ label {
 }
 
 .mdl-body{
-  padding: 10px;
+  padding: 20px;
 }
 
 .mdl-body h5 {
@@ -773,7 +775,11 @@ label {
 .profile-card h3 {
   font-size: 28px;
   font-weight: 700;
-  color: #087001;
+  color: #0f5d09;
+}
+
+.edit-profile h3 {
+  color: #0eb93e;
 }
 
 .profile-card p {
@@ -829,7 +835,7 @@ label {
   text-align: center;
   text-transform: capitalize;
   padding: 10px;
-  border-radius: 5%;
+  border-radius: 5px;
   width: 100%;
   margin: 10px;
 }
@@ -883,4 +889,120 @@ label {
   display: flex;
   align-items: center;
   flex-direction: row;
+}
+
+/* receipt */
+.receipt-container {
+  margin: 20px auto;
+  width: 90%;
+  padding: 20px;
+  font-size: 13px;
+  border-radius: 5px;
+}
+
+.receipt-container .rec-logo {
+  margin-right: 20px;
+}
+
+.receipt-container .rec-logo img {
+  max-height: 60px;
+}
+
+.receipt-container .badge {
+  background-color: #0f5d09;
+  color: #fff;
+  padding: 8px 16px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.receipt-body {
+  margin-top: 40px;
+}
+
+.receipt-body-content {
+  min-width: 300px;
+}
+
+.receipt-body-content h5 {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.receipt-body-content span {
+  margin-right: 20px;
+}
+
+.receipt-table {
+  margin-top: 40px;
+}
+
+.receipt-footer{
+  text-align: center;
+} 
+
+.receipt-footer h6 {
+  margin: 0;
+  font-size: 14px;
+  font-style: italic;
+}
+
+.receipt-footer .receipt-brand {
+  margin-top: 80px;
+} 
+
+.receipt-footer .receipt-brand h2 {
+  font-size: 18px;
+  font-weight: 800;
+  margin: 0;
+}
+
+.receipt-footer .receipt-brand p {
+  margin-bottom: 0;
+}
+
+.receipt-footer .receipt-brand span {
+  margin-right: 10px;
+}
+
+.btn-print {
+  display: block;
+  text-align: right;
+  margin-top: 60px;
+}
+
+@media print {
+  /* Ensure background colors are printed */
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Other print-specific styles */
+  body * {
+    visibility: hidden;
+  }
+
+  .back-to-top {
+    visibility: hidden;
+  }
+
+  .back-to-top.active {
+    visibility: hidden;
+  }
+
+  .receipt-container, .receipt-container * {
+    visibility: visible;
+  }
+
+  .receipt-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+  }
+
+  .btn-print {
+    display: none;
+  }
 }

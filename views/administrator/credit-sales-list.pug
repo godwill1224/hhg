@@ -2,7 +2,6 @@ extends admin-layout.pug
 
 block scripts
   script.
-    // Embed the users data from the server into a JavaScript variable
     const allCreditSales = !{JSON.stringify(creditSales)};
   script(src='/js/tables/administrator/credit-sale.js')
 
@@ -14,7 +13,7 @@ block content
         ol.breadcrumb
           li.breadcrumb-item
             a(href='/dashboard') Dashboard
-          li.breadcrumb-item.active All Credit Sales
+          li.breadcrumb-item.active Credit Sales
   .table-container
     .controls
       .searchInput
@@ -30,7 +29,7 @@ block content
         tr
           th Produce Name
           th Tonnage (Kg)
-          th Amt / Kg (USh)
+          th Amt Due / Kg (USh)
           th Tot Amt Due (USh)
           th Dispatched On
           th Due Date

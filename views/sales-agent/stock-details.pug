@@ -1,33 +1,35 @@
-extends admin-layout.pug
+extends agent-layout.pug
+
+block scripts
+  script(src='/js/modal.js')
 
 block content
   .pagetitle
-    h1 Credit Sales Details
+    h1 Produce Details
     nav
       ol.breadcrumb
         li.breadcrumb-item
           a(href='/dashboard') Dashboard
         li.breadcrumb-item
-          a(href='/all-sales') Stock List
-        li.breadcrumb-item.active credit Sales Details
+          a(href='/all-stock') Stock List
+        li.breadcrumb-item.active Produce Details
   .card.stock-card
-    .stock-card-header.row
-      .mb-2
-        h4
-          strong Revenue Projections
-      .col-lg-4.col-md-4.p-2.stock-header
-        h3.error
+    .mb-2
+      h4
+        strong Revenue Projections
+    .stock-card-header
+      .stock-header.error
+        h3
           strong= new Intl.NumberFormat('en-UG', { style: 'currency', currency: 'UGX', minimumFractionDigits: 0 }).format(produce.tonnage * produce.produceCost)
-        p.error Total Cost
-      .col-lg-4.col-md-4.p-2.stock-header
+        p Total Cost
+      .stock-header.warning
         h3
           strong= new Intl.NumberFormat('en-UG', { style: 'currency', currency: 'UGX', minimumFractionDigits: 0 }).format(produce.tonnage * produce.sellingPrice)
-        p Total Income
-      .col-lg-4.col-md-4.p-2.stock-header
-        h3.success
+        p Expected Income
+      .stock-header.success
+        h3
           strong= new Intl.NumberFormat('en-UG', { style: 'currency', currency: 'UGX', minimumFractionDigits: 0 }).format((produce.tonnage * produce.sellingPrice) - (produce.tonnage * produce.produceCost))
-        p.success Total Profit
-
+        p Expected Profit
     .stock-card-body
       .mb-2
         h4
@@ -72,7 +74,7 @@ block content
           span
             strong Storage Branch:
         .col-lg-9
-          span= produce.storagebranch
+          span= `${produce.storagebranch} branch`
       .row.mb-2.stock-info
         .col-lg-3
           span
@@ -100,11 +102,35 @@ block content
           span
             strong Email:
         .col-lg-9
-          span= produce.dealerEmail
+          span.email= produce.dealerEmail
       .row.mb-4.stock-info
         .col-lg-3
           span
             strong Phone:
         .col-lg-9
           span= produce.dealerPhone
+    .row.mb-2.mt-4
+      .col-lg-3
+        span
+          strong Actions:
+      .col-lg-9.actions
+        a(class="action-btn edit-btn" href="/update-stock/"+produce._id)
+          i.bi.bi-pen
+          |  Edit
+        div
+          form(method="POST" action="/delete-stock")
+            input(type="hidden" name="id" value=produce._id)
+            button(class="action-btn del-btn" type="button")
+              i.bi.bi-trash
+              |  Delete
+
+  .modal#deleteModal
+    .modal-dialog
+      .modal-content
+        .mdl-body
+          h5 Confirm Deletion!
+          p Are you sure you want to delete this produce?
+        .mdl-footer
+          button(type='button' class='action-btn view-btn' id='cancelDelete') Cancel
+          button(type='button' class='action-btn del-btn' id='confirmDelete') Delete
 

@@ -1,7 +1,7 @@
 extends admin-layout.pug
   
 block scripts
-  script(src='/js/form-validations/add-user.js')
+  script(src='/js/form-validations/user.js')
   
 block content
   .pagetitle
@@ -30,16 +30,16 @@ block content
             label(for='role') Role:
             select#role(name='role')
               option(selected value="") Asign Role
-              option(value='administrator') Administrator
-              option(value='manager') Manager
-              option(value='salesAgent') SalesAgent
+              option(value='administrator') administrator
+              option(value='manager') manager
+              option(value='sales-agent') sales agent
           .mb-2
             label(for='branch') Branch:
-            select#branch(name='branch')
-              option(selected value="") Alocate Branch
-              option(value='1') Branch 1
-              option(value='2') Branch 2
-              option(value='3') Branch 3
+            if branches.length
+              select#branch(name='branch')
+                option(selected value="") Allocate Branch
+                each branch in branches
+                  option(value=branch.branchName) #{branch.branchName}
           .mb-2
             label(for='dateAdded') Date Added:
             input#dateAdded(name='dateAdded' type='datetime-local')

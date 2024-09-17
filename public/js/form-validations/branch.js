@@ -8,33 +8,36 @@ document.addEventListener("DOMContentLoaded", () => {
 
   form.addEventListener("submit", function (event) {
     let isValid = true;
-    let errorMessage = "Failed to update branch!!!\n";
+
+   // Clear previous styles
+    branchNameInput.style = "border: 1px #087001 solid";
+    branchLocationInput.style = "border: 1px #087001 solid";
+    dateCreatedInput.style = "border: 1px #087001 solid";
+    commentInput.style = "border: 1px #087001 solid";
+
+    let errorMessage = "Failed to submit!\n";
 
     // Clear previous messages
     invalidationMessage.textContent = "";
 
-    // Validate Branch Name
     if (!branchNameInput.value.trim()) {
       isValid = false;
       errorMessage += "Branch Name is required.\n";
       branchNameInput.style = "border: 1px #ef1515 solid";
     }
 
-    // Validate Branch Location Number
     if (!branchLocationInput.value.trim()) {
       isValid = false;
       errorMessage += "Branch Location is required.\n";
       branchLocationInput.style = "border: 1px #ef1515 solid";
     }
 
-    // Validate Role Selection
     if (dateCreatedInput.value.trim() === "") {
       isValid = false;
       errorMessage += "Please add a date.\n";
       dateCreatedInput.style = "border: 1px #ef1515 solid";
     }
 
-    // Validate Branch Selection
     if (commentInput.value.trim() === "") {
       isValid = false;
       errorMessage += "Please add a comment.\n";

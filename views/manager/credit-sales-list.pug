@@ -1,0 +1,56 @@
+extends manager-layout.pug
+
+block scripts
+  script.
+    const allCreditSales = !{JSON.stringify(creditSales)};
+  script(src='/js/tables/manager/credit-sale.js')
+
+block content
+  .pagetitle
+    .d-flex.justify-content-between.align-items-center
+      div
+        h1 All Branch Credit Sales
+        nav
+          ol.breadcrumb
+            li.breadcrumb-item
+              a(href='/dashboard') Dashboard
+            li.breadcrumb-item.active Credit Sales List
+      div
+        a.button(href='/add-credit-sale')
+          i.bi.bi-plus-lg
+          |  New
+  .table-container
+    .controls
+      .searchInput
+        input#searchInput(type='text' placeholder='search credit sale by produce name, dispatch branch or agent / manager name...')
+      div
+        select#entriesPerPage
+          option(value='5') 5 Entries
+          option(value='10') 10 Entries
+          option(value='15') 15 Entries
+          option(value='20') 20 Entries
+    table#dataTable
+      thead
+        tr
+          th Produce Name
+          th Tonnage (Kg)
+          th Amt Due / Kg (USh)
+          th Tot Amt Due (USh)
+          th Dispatched On
+          th Due Date
+          th Dispatched By
+          th Actions
+      tbody
+
+    p#noResultsMessage(style='display:none;') No sales records found!
+    #pagination
+
+  .modal#deleteModal
+    .modal-dialog
+      .modal-content
+        .mdl-body
+          h5 Confirm Deletion!
+          p Are you sure you want to delete this credit sale record?
+        .mdl-footer
+          button(type='button' class='action-btn view-btn' id='cancelDelete') Cancel
+          button(type='button' class='action-btn del-btn' id='confirmDelete') Delete

@@ -1,0 +1,146 @@
+extends manager-layout.pug
+
+block scripts
+  script(src='/js/modal.js')
+
+block content
+  .pagetitle
+    h1 Credit Sale Details
+    nav
+      ol.breadcrumb
+        li.breadcrumb-item
+          a(href='/dashboard') Dashboard
+        li.breadcrumb-item
+          a(href='/all-credit-sales') Credit Sales List
+        li.breadcrumb-item.active Credit Sale Details
+  .card.stock-card
+    .mb-2
+      h4
+        strong Revenue Projections
+    .stock-card-header
+      .stock-header.error
+        h3
+          strong= `${creditSale.tonnageDispatched} Kg`
+        p Tonnage Dispatched
+      .stock-header.warning
+        h3
+          strong= new Intl.NumberFormat('en-UG', { style: 'currency', currency: 'UGX', minimumFractionDigits: 0 }).format(creditSale.amountDue)
+        p Amount Due Per Kg
+      .stock-header.success
+        h3
+          strong= new Intl.NumberFormat('en-UG', { style: 'currency', currency: 'UGX', minimumFractionDigits: 0 }).format(creditSale.tonnageDispatched * creditSale.amountDue)
+        p Total Amount Due
+    .stock-card-body
+      .mb-2
+        h4
+          strong Credit Sale Info
+      .row.mb-2.stock-info
+        .col-lg-3
+          span
+            strong Produce Name:
+        .col-lg-9
+          span= creditSale.produceName
+      .row.mb-2.stock-info
+        .col-lg-3
+          span
+            strong Produce Type:
+        .col-lg-9
+          span= creditSale.produceType
+      .row.mb-2.stock-info
+        .col-lg-3
+          span
+            strong Tonnage Dispatched (Kg):
+        .col-lg-9
+          span= creditSale.tonnageDispatched
+      .row.mb-2.stock-info
+        .col-lg-3
+          span
+            strong Amount Due / Kg (USh):
+        .col-lg-9
+          span= creditSale.amountDue
+      .row.mb-2.stock-info
+        .col-lg-3
+          span
+            strong Sale Branch:
+        .col-lg-9
+          span= `${creditSale.dispatchBranch} branch`
+      .row.mb-2.stock-info
+        .col-lg-3
+          span
+            strong Sold by:
+        .col-lg-9
+          span= creditSale.dispatchedBy
+      .row.mb-4.stock-info
+        .col-lg-3
+          span
+            strong Dispatched On:
+        .col-lg-9
+          span= moment(creditSale.dispatchDate).format('YYYY-MM-DD (h:mm A)')
+      .row.mb-4.stock-info
+        .col-lg-3
+          span
+            strong Due Date:
+        .col-lg-9
+          span= moment(creditSale.dueDate).format('YYYY-MM-DD (h:mm A)')
+    .stock-card-body
+      .mb-2.mt-4
+        h4
+          strong Buyer / Customer Details
+      .row.mb-2.stock-info
+        .col-lg-3
+          span
+            strong Name:
+        .col-lg-9
+          span= creditSale.buyerName
+      .row.mb-2.stock-info
+        .col-lg-3
+          span
+            strong Email:
+        .col-lg-9
+          span.email= creditSale.buyerEmail
+      .row.mb-2.stock-info
+        .col-lg-3
+          span
+            strong Phone:
+        .col-lg-9
+          span= creditSale.buyerPhone
+      .row.mb-2.stock-info
+        .col-lg-3
+          span
+            strong NIN (National ID Number):
+        .col-lg-9
+          span= creditSale.buyerNIN
+      .row.mb-2.stock-info
+        .col-lg-3
+          span
+            strong Location:
+        .col-lg-9
+          span= creditSale.buyerLocation
+    .row.mb-2.mt-4
+      .col-lg-3
+        span
+          strong Actions:
+      .col-lg-9.actions
+        a(class="action-btn view-btn" href="/invoice/"+creditSale._id)
+          i.bi.bi-receipt-cutoff
+          |  Generate Invoice
+        a(class="action-btn edit-btn" href="/update-credit-sale/"+creditSale._id)
+          i.bi.bi-pen
+          |  Edit
+        div
+          form(method="POST" action="/delete-credit-sale")
+            input(type="hidden" name="id" value=creditSale._id)
+            button(class="action-btn del-btn" type="button")
+              i.bi.bi-trash
+              |  Delete
+
+  .modal#deleteModal
+    .modal-dialog
+      .modal-content
+        .mdl-body
+          h5 Confirm Deletion!
+          p Are you sure you want to delete this credit sale record?
+        .mdl-footer
+          button(type='button' class='action-btn view-btn' id='cancelDelete') Cancel
+          button(type='button' class='action-btn del-btn' id='confirmDelete') Delete
+

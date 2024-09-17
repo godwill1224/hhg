@@ -1,0 +1,74 @@
+extends manager-layout.pug
+
+block content
+  .pagetitle
+    h1 Sale Receipt
+    nav
+      ol.breadcrumb
+        li.breadcrumb-item
+          a(href='/all-sales') Sales List
+        li.breadcrumb-item
+          a(href="/view-sale/"+sale._id) Sales Details
+        li.breadcrumb-item.active Sale Receipt
+  .receipt-container
+    .d-flex.justify-content-between.align-items-center
+      .rec-logo
+        a(href='dashboard.html')
+          img(src='/img/logo.png' alt='logo')
+      div
+        span.badge SALE RECEIPT
+    .receipt-body.d-flex.justify-content-between
+      .receipt-body-content
+        h5 Customer Details
+        span= sale.buyerName 
+        br
+        span= sale.buyerEmail
+        br
+        span= sale.buyerPhone
+      .receipt-body-content
+        h5 Sale Details
+        span
+          strong Sale Id:
+        span= sale._id 
+        br
+        span
+          strong Date of Sale:
+        span= moment(sale.dateSold).format('YYYY-MM-DD (h:mm A)')
+        br
+        span
+          strong Payment Method:
+        span Cash
+    table.receipt-table
+      thead
+        tr
+          th Item
+          th QTY (Kg)
+          th Cost (USh)
+          th.text-end Total (USh)
+      tbody
+        tr
+          td= `${sale.produceName} (${sale.produceType })`
+          td= sale.tonnageSold
+          td= new Intl.NumberFormat('en-UG', { style: 'currency', currency: 'UGX', minimumFractionDigits: 0 }).format(sale.amountPaid)
+          td.text-end= new Intl.NumberFormat('en-UG', { style: 'currency', currency: 'UGX', minimumFractionDigits: 0 }).format(sale.tonnageSold * sale.amountPaid)
+      tfoot
+        tr
+          td.text-end(colspan='3')
+            strong  TOTAL AMOUNT PAID (USh):
+          td.text-end
+            strong= new Intl.NumberFormat('en-UG', { style: 'currency', currency: 'UGX', minimumFractionDigits: 0 }).format(sale.tonnageSold * sale.amountPaid)
+    .receipt-footer
+      p Thank you for your purchase!
+      .receipt-brand
+        h2 Happy Hoe Grocery Ltd.
+        p The best wholesale produce distributor dealing in cereals like; beans, grain maize, cowpeas, g-nuts, rice and soybeans.
+        span
+          i.bi.bi-telephone
+          |  0780169873
+        span
+          i.bi.bi-envelope
+          |  happyhoegroceriesltd@gmail.com
+    .btn-print
+      button.button(onclick='window.print()') 
+        i.bi.bi-printer
+        |  Print Receipt

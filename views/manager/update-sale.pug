@@ -1,0 +1,64 @@
+extends manager-layout.pug
+
+block scripts
+  script(src='/js/form-validations/sale.js')
+
+block content
+  .pagetitle
+    h1 Edit Sale Records
+    nav
+      ol.breadcrumb
+        li.breadcrumb-item
+          a(href='/dashboard') Dashboard
+        li.breadcrumb-item
+          a(href='/all-sales') Sales List
+        li.breadcrumb-item.active Edit Sale
+  .card
+    form(action="/update-sale?id="+sale._id method="POST")
+      .row
+        .col-md-6
+          .mb-2
+            label(for='produceName') Produce Name:
+            select#produceName(name='produceName')
+              option(selected value="") Select Produce Name
+              option(value='beans') beans
+              option(value='grain-maize') grain maize
+              option(value='cowpeas') cowpeas
+              option(value='g-nuts') g-nuts
+              option(value='rice') rice
+              option(value='soybeans') soybeans
+          .mb-2
+            label(for='produceType') Produce Type:
+            select#produceType(name='produceType')
+              option(selected value="") Select Produce Type
+              option(value='cereal') cereal
+              option(value='grain') grain
+              option(value='legume') legume
+          .mb-2
+            label(for='tonnageSold') tonnageSold Sold (Kg):
+            input#tonnageSold(name='tonnageSold' type='number' placeholder='Enter Tonnage Sold' value=sale.tonnageSold)
+          .mb-2
+            label(for='amountPaid') Amount Paid / Kg (USh):
+            input#amountPaid(name='amountPaid' type='number' placeholder='Amount Paid per Kg' value=sale.amountPaid)
+          .mb-2
+            label(for='dateSold') Date Updated (Read Only):
+            input#dateSold(name='dateSold' type='datetime-local' value=(new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0,16)))
+        .col-md-6
+          .mb-2
+            label(for='saleBranch') Sale Branch (Read Only):
+            input#saleBranch(name='saleBranch' type='text' readonly value=loggedInUser.branch)
+          .mb-2
+            label(for='soldBy') Sold By (Read Only):
+            input#soldBy(name='soldBy' type='text' readonly value=loggedInUser.userName)
+          .mb-2
+            label(for='buyerName') Buyer / Customer Name:
+            input#buyerName(name='buyerName' type='text' placeholder='Enter Buyer / Customer Name' value=sale.buyerName)
+          .mb-2
+            label(for='buyerEmail') Buyer / Customer Email:
+            input#buyerEmail(name='buyerEmail' placeholder='Enter Buyer / Customer Email Address' value=sale.buyerEmail)
+          .mb-2
+            label(for='buyerPhone') Buyer / Customer Phone:
+            input#buyerPhone(name='buyerPhone' type='text' placeholder='Enter Buyer / Customer Phone' value=sale.buyerPhone)
+          .submit-button
+            p.invalidation-message 
+            button.button(type='submit') Save Changes

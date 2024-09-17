@@ -1,7 +1,7 @@
 extends manager-layout.pug
 
 block scripts
-  script(src='/js/form-validations/add-sale.js')
+  script(src='/js/form-validations/sale.js')
 
 block content
   .pagetitle
@@ -35,12 +35,12 @@ block content
               option(value='grain') grain
               option(value='legume') legume
           .mb-2
-            label(for='tonnageSold') tonnageSold Sold (Kg):
+            label(for='tonnageSold') Tonnage Sold (Kg):
             input#tonnageSold(name='tonnageSold' type='number' placeholder='Enter Tonnage Sold')
           .mb-2
             label(for='amountPaid') Amount Paid / Kg (USh):
             input#amountPaid(name='amountPaid' type='number' placeholder='Amount Paid per Kg')
-          .mb-4
+          .mb-2
             label(for='dateSold') Date Sold:
             input#dateSold(name='dateSold' type='datetime-local')
         .col-md-6
@@ -61,4 +61,4 @@ block content
             input#buyerPhone(name='buyerPhone' type='text' placeholder='Enter Buyer / Customer Phone')
           .submit-button
             p.invalidation-message 
-            button.button(type='submit') Add Produce
+            button.button(type='submit') Add Sale
